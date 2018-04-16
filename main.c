@@ -30,9 +30,11 @@ order = 2;
 
   char acceptString[200];
   for (int coefficientindex = order; coefficientindex >= 0; coefficientindex--) {
-    printf ("coeff index %d", coefficientindex);
-    sprintf(acceptString, "coeff %d = %s %s\n", coefficientindex, "%lf", "%lf");
+    sprintf(acceptString, "coeff %d = %s %s", coefficientindex, "%lf", "%lf");
+    printf ("accepting %s\n", acceptString);
     scanf(acceptString, &coefficients[coefficientindex][0], &coefficients[coefficientindex][1]);
+    // Catch "\n".
+    getchar();
   }
   printf("\nResult:\n");
   for (int printIndex = 0; printIndex <= order; printIndex++) {
