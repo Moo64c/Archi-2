@@ -14,10 +14,12 @@ int main(void) {
   int index = 0;
 
   // Tolerance.
-  scanf("epsilon = %lf\n", &epsilon);
+//  scanf("epsilon = %lf\n", &epsilon);
 
   // Size of polynom.
-  scanf("order = %i\n", &order);
+//  scanf("order = %i\n", &order);
+
+order = 2;
 
   // Allocate data and reset values.
   double coefficients[order + 1][2];
@@ -28,9 +30,15 @@ int main(void) {
 
   char acceptString[200];
   for (int coefficientindex = order; coefficientindex >= 0; coefficientindex--) {
-    sprintf(acceptString, "coeff %d = %lf %lf\n", coefficientindex);
-    scanf(acceptString, coefficients[coefficientindex][0], coefficients[coefficientindex][1]);
+    printf ("coeff index %d", coefficientindex);
+    sprintf(acceptString, "coeff %d = %s %s\n", coefficientindex, "%lf", "%lf");
+    scanf(acceptString, &coefficients[coefficientindex][0], &coefficients[coefficientindex][1]);
   }
+  printf("\nResult:\n");
+  for (int printIndex = 0; printIndex <= order; printIndex++) {
+    printf("(%lf + %lf) * x ^ %d ", coefficients[printIndex][0], coefficients[printIndex][1], printIndex);
+  }
+  printf("\n");
 
   return 0;
 }
