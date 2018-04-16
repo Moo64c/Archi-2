@@ -29,80 +29,20 @@ int main(void) {
   for (int initIndex = 0; initIndex < MAX_LEN; initIndex++) {
     str_buf[initIndex] = 0;
   }
-  numstack_init();
 
   /* Read user's command line string */
-  fgets(str_buf, MAX_LEN, stdin);
-  // Create stack.
-  stack = split_string(str_buf);
-
-  int current_word_type = -1;
-  for (int index = 0; index < stack_size; index++) {
-    current_word_type = word_type(stack[index]);
-    if (current_word_type == 0 || current_word_type == 1) {
-      // tis a number
-      // Add this to the number stack.
-      struct stack_item * newItem = create_number(stack[index]);
-      numstack_push(newItem);
-    }
-
-    if (current_word_type == 2) {
-      // Add.
-      if (debug > 1) {
-        printf("adding numbers\n");
-      }
-      add_wrapper();
-    }
-
-    if (current_word_type == 3) {
-      // Subtract.
-      stack_item * si2 = numstack_pop();
-      stack_item * si1 = numstack_pop();
-      bignum* bn2 = si2->value;
-      bignum* bn1 = si1->value;
-
-      int which = subtract_bignums(bn1, bn2);
-      after_operation_cleanup(which, si1, si2);
-    }
-    if (current_word_type == 4) {
-      // Multiply.
-      multiply_wrapper();
-    }
-    if (current_word_type == 5) {
-      // Divide.
-      divide_wrapper();
-    }
-
-    if (current_word_type == 6) {
-      // Print action.
-      if (top != NULL) {
-        print_bn(top->value);
-        printf("\n");
-      }
-    }
-
-    if (current_word_type == 7) {
-      // Clear stack.
-      clear_numstack();
-    }
-
-    if (current_word_type == 8) {
-      // Exit.
-      break;
-    }
-    if (current_word_type == 9) {
-      // Special debug.
-      print_stack();
-    }
+  int epsilon = 0;
+  int order = 0;
+  int * coefficient = NULL;
+  int character = 0;
+  int index = 0;
+  while ((character = fgetc(stdin)) != EOF) {
+    str_buf[index] = character;
+    index++;
   }
 
-  if (debug > 1) {
-    print_stack();
-  }
 
-  // Clean the stacks.
-  clear_numstack();
-  clear_wordstack(stack);
+
   return 0;
 }
 
