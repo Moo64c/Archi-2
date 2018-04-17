@@ -6,9 +6,14 @@
 #include <string.h>
 #include <math.h>
 
-double * complex_power(double * complex, int power);
+double * power_complex(double * complex, int power);
+double * add_complex(double * complex1, double * complex2)
+double * subtract_complex(double * complex1, double * complex2)
 double * multiply_complex(double * complex1, double * complex2);
+double * divide_complex(double * complex1, double * complex2);
+double * invert_complex(double * complex);
 double * apply_function(double coefficient[][2], int order, double * value);
+double * newton_step(double coefficient[][2], double * current_value);
 
 int DOUBLE_SIZE = 2;
 
@@ -72,8 +77,6 @@ int main(void) {
     value[1] = 1.0;
 
     double * result = apply_function(coeff, 2, value);
-    printf("result: %lf + %lfi", result[0], result[1]);
-
 
     return 0;
 }
@@ -88,17 +91,14 @@ double * apply_function(double coefficient[][2], int order, double * value) {
     result[1] = 0.0;
     for (int index = 0; index <= order; index++) {
         // Calculate value ^ (current order) * coefficient.
-        double * step = complex_power(value, index);
-        fprintf(stderr, "foo %d\n", index);
-
+        double * step = power_complex(value, index);
         step = multiply_complex(step, coefficient[index]) ;
-        fprintf(stderr, "foo2 %d\n", index);
         // A
         result[0] += step[0];
         result[1] += step[1];
-
+        // Cleanp.
+        free(step);
     }
-
 
     return result;
 }
@@ -114,7 +114,7 @@ double * multiply_complex(double * complex1, double * complex2) {
 /**
  * Calculates raising a complex number to the power specified.
  */
-double * complex_power(double * complex, int power) {
+double * power_complex(double * complex, int power) {
     double * result = (double *) malloc(2 * sizeof(double));
 
     if (power == 0) {
@@ -147,4 +147,62 @@ double ** calculate_derivative(double ** coefficient, int order) {
         order--;
     }
     return coefficient;
+}
+
+/**
+ * Divide complex1 by complex2.
+ */
+double * divide_complex(double * complex1, double * complex2) {
+    double absolute_value = sqrt(complex[0] * complex[0] + complex[1] * complex[1]);
+    double * result = (double *) malloc(2 * sizeof(double));
+    double * inverted_denominator = invert_complex(conmplex2);
+
+    result = multiply_complex(complex1, inverted_denominator);
+    double norma = powf(complex2[0], 2) + powf(complex2[1], 2);
+    // (a+bi) / (c+di) = ((a+bi)*(c-di))/((c+di)(c-di)) = ((a+bi)*(c-di))/(c^2 +d^2)
+
+    result[0] = result[0] / norma;
+    result[1] = result[1] / norma;
+    // Cleanup.
+    free(inverted_denominator);
+    return result;
+}
+
+/**
+ * Add two complex numbers.
+ */
+double * add_complex(double * complex1, double * complex2) {
+  double * result = (double *) malloc(2 * sizeof(double));
+  result[0] = complex1[0] + complex2[0];
+  result[1] = complex1[1] + complex2[1];
+  return result;
+}
+
+/**
+ * Subtract complex2 from complex1.
+ */
+double * subtract_complex(double * complex1, double * complex2) {
+  double * result = (double *) malloc(2 * sizeof(double));
+  result[0] = complex2[0] - complex1[0];
+  result[1] = complex2[1] - complex1[1];
+  return result;
+}
+
+/**
+ * Get invert of a complex value.
+ */
+double * invert_complex(double * complex) {
+  double * result = (double *) malloc(2 * sizeof(double));
+
+  result[0] = complex[0];
+  result[1] = 0.0 - complex[1];
+
+  return result;
+}
+
+/**
+ * Create next Z_n in the Newton-Raphson analysis.
+ */
+double * newton_step(double coefficient[][2], double * current_value) {
+  double * result = (double *) malloc(2 * sizeof(double));
 }
