@@ -9,6 +9,7 @@
 double * complex_power(double * complex, int power);
 double * multiply_complex(double * complex1, double * complex2);
 double * apply_function(double coefficient[][2], int order, double * value);
+double ** calculate_derivative(double coefficient[][2], int order);
 
 int DOUBLE_SIZE = 2;
 
@@ -20,60 +21,39 @@ int main(void) {
     // To be allocated later.
 
     // Tolerance.
-    //scanf("epsilon = %lf\n", &epsilon);
+    scanf("epsilon = %lf\n", &epsilon);
 
     // Size of polynom.
-    //scanf("order = %i\n", &order);
+    scanf("order = %i\n", &order);
 
     // COEFFICIENTS
-//    // Allocate data and reset values.
-//    double coefficients[order + 1][2];
-//    for (int initIndex = 0; initIndex < order + 1; initIndex++) {
-//        coefficients[initIndex][0] = 0.0;
-//        coefficients[initIndex][1] = 0.0;
-//    }
-//
-//    char acceptString[200];
-//    for (int coefficientindex = order; coefficientindex >= 0; coefficientindex--) {
-//        //sprintf(acceptString, "coeff %d = %s %s", coefficientindex, "%lf", "%lf");
-//        //scanf(acceptString, &coefficients[coefficientindex][0], &coefficients[coefficientindex][1]);
-//        // Catch "\n".
-//        //getchar();
-//    }
-//    printf("\nResult:\n");
-//    for (int printIndex = 0; printIndex <= order; printIndex++) {
-//        printf("(%lf + %lf) * x ^ %d ", coefficients[printIndex][0], coefficients[printIndex][1], printIndex);
-//    }
-//
-//    printf("\n");
+    // Allocate data and reset values.
+    double coefficients[order + 1][2];
+    for (int initIndex = 0; initIndex < order + 1; initIndex++) {
+        coefficients[initIndex][0] = 0.0;
+        coefficients[initIndex][1] = 0.0;
+    }
+
+    char acceptString[200];
+    for (int coefficientindex = order; coefficientindex >= 0; coefficientindex--) {
+        sprintf(acceptString, "coeff %d = %s %s", coefficientindex, "%lf", "%lf");
+        scanf(acceptString, &coefficients[coefficientindex][0], &coefficients[coefficientindex][1]);
+        // Catch "\n".
+        getchar();
+    }
+    printf("\nResult:\n");
+    for (int printIndex = 0; printIndex <= order; printIndex++) {
+        printf("(%lf + %lf) * x ^ %d ", coefficients[printIndex][0], coefficients[printIndex][1], printIndex);
+    }
+
+    printf("\n");
 
     // INITIAL
 
-    //sprintf(acceptString, "initial = %s %s", "%lf", "%lf");
-    //scanf(acceptString, &initial[0], &initial[1]);
+    sprintf(acceptString, "initial = %s %s", "%lf", "%lf");
+    scanf(acceptString, &initial[0], &initial[1]);
     // Catch "\n".
-    //getchar();
-
-/*  printf("epsilon : %e\n", epsilon);
-    printf("oeder : %d\n", order);
-    printf("initial real : %lf\n", initial[0][0]);
-    printf("initial imaginary : %lf\n", initial[0][1]);
-//*/
-    double coeff[3][2];
-    coeff[0][0] = 0.0;
-    coeff[0][1] = 0.0;
-    coeff[1][0] = 1.0;
-    coeff[1][1] = 0.0;
-    coeff[2][0] = 0.0;
-    coeff[2][1] = 0.0;
-
-    double value[2];
-    value[0] = 4.0;
-    value[1] = 1.0;
-
-    double * result = apply_function(coeff, 2, value);
-    printf("result: %lf + %lfi", result[0], result[1]);
-
+    getchar();
 
     return 0;
 }
@@ -140,11 +120,14 @@ double * complex_power(double * complex, int power) {
 /**
  * Gets a derivative of a coefficient representation of a polynom.
  */
-double ** calculate_derivative(double ** coefficient, int order) {
-    for(int index = 0; index < order; index++){
-        coefficient[index][0] = order * coefficient[index][0];
-        coefficient[index][1] = order * coefficient[index][1];
-        order--;
+double ** calculate_derivative(double coefficient[][2], int order) {
+    fprintf(stderr, "foo \n");
+    double ** derivative = (double **) malloc((order) * sizeof(double));
+    for(int index = 1; index <= order ; index++){
+        fprintf(stderr, "index %d\n", index);
+        derivative[index-1] = (double *) malloc(2 * sizeof(double));
+        derivative[index-1][0] = index * coefficient[index][0];
+        derivative[index-1][1] = index * coefficient[index][1];
     }
-    return coefficient;
+    return derivative;
 }
