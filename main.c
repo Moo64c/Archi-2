@@ -12,17 +12,15 @@ double * subtract_complex(double * complex1, double * complex2);
 double * multiply_complex(double * complex1, double * complex2);
 double * divide_complex(double * complex1, double * complex2);
 double * invert_complex(double * complex);
-double * apply_function(double coefficient[][2], int order, double * value);
-double * newton_step(double coefficient[][2], double * current_value);
-double ** calculate_derivative(double coefficient[][2], int order);
-
-int DOUBLE_SIZE = 2;
+double * apply_function(double ** coefficient, int order, double * value);
+double * newton_step(double ** coefficient, int order, double * current_value);
+double ** calculate_derivative(double ** coefficient, int order);
 
 int main(void) {
     // Specific input for this program.
     double epsilon = 0;
     int order = 0;
-    DOUBLE_SIZE = (int) sizeof(double);
+    double initial[2];
     // To be allocated later.
 
     // Tolerance.
@@ -33,8 +31,9 @@ int main(void) {
 
     // COEFFICIENTS
     // Allocate data and reset values.
-    double coefficients[order + 1][2];
+    double ** coefficients = (double **) malloc(sizeof(double *) * (order + 1));
     for (int initIndex = 0; initIndex < order + 1; initIndex++) {
+        coefficients[initIndex] = (double *) malloc(sizeof(double) * 2);
         coefficients[initIndex][0] = 0.0;
         coefficients[initIndex][1] = 0.0;
     }
@@ -66,7 +65,7 @@ int main(void) {
 /**
  * Gets the result of applying a polynomial function with a specific value.
  */
-double * apply_function(double coefficient[][2], int order, double * value) {
+double * apply_function(double ** coefficient, int order, double * value) {
     //
     double * result = (double *) malloc(2 * sizeof(double));
     result[0] = 0.0;
@@ -122,7 +121,7 @@ double * power_complex(double * complex, int power) {
 /**
  * Gets a derivative of a coefficient representation of a polynom.
  */
-double ** calculate_derivative(double coefficient[][2], int order) {
+double ** calculate_derivative(double ** coefficient, int order) {
     fprintf(stderr, "foo \n");
     double ** derivative = (double **) malloc((order) * sizeof(double));
     for(int index = 1; index <= order ; index++){
@@ -138,9 +137,9 @@ double ** calculate_derivative(double coefficient[][2], int order) {
  * Divide complex1 by complex2.
  */
 double * divide_complex(double * complex1, double * complex2) {
-    double absolute_value = sqrt(complex[0] * complex[0] + complex[1] * complex[1]);
+    double absolute_value = sqrt(complex2[0] * complex2[0] + complex2[1] * complex2[1]);
     double * result = (double *) malloc(2 * sizeof(double));
-    double * inverted_denominator = invert_complex(conmplex2);
+    double * inverted_denominator = invert_complex(complex2);
 
     result = multiply_complex(complex1, inverted_denominator);
     double norma = powf(complex2[0], 2) + powf(complex2[1], 2);
@@ -188,6 +187,16 @@ double * invert_complex(double * complex) {
 /**
  * Create next Z_n in the Newton-Raphson analysis.
  */
-double * newton_step(double coefficient[][2], double * current_value) {
+double * newton_step(double ** coefficient, int order, double * current_value) {
   double * result = (double *) malloc(2 * sizeof(double));
+  double ** derivative = calculate_derivative(coefficient, order);
+
+  result = subtract_complex(current_value,
+    divide_complex(
+      apply_function(coefficient, order, current_value),
+      apply_function(derivative, order - 1, current_value)
+    )
+  );
+
+  return result;
 }
