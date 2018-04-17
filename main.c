@@ -6,6 +6,8 @@
 #include <string.h>
 #include <math.h>
 
+double * complex_power(double * complex, int power);
+
 int main(void) {
     // Specific input for this program.
     double epsilon = 0;
@@ -13,10 +15,10 @@ int main(void) {
     // To be allocated later.
 
     // Tolerance.
-    scanf("epsilon = %lf\n", &epsilon);
+    //scanf("epsilon = %lf\n", &epsilon);
 
     // Size of polynom.
-    scanf("order = %i\n", &order);
+    //scanf("order = %i\n", &order);
 
     // COEFFICIENTS
     // Allocate data and reset values.
@@ -28,10 +30,10 @@ int main(void) {
 
     char acceptString[200];
     for (int coefficientindex = order; coefficientindex >= 0; coefficientindex--) {
-        sprintf(acceptString, "coeff %d = %s %s", coefficientindex, "%lf", "%lf");
-        scanf(acceptString, &coefficients[coefficientindex][0], &coefficients[coefficientindex][1]);
+        //sprintf(acceptString, "coeff %d = %s %s", coefficientindex, "%lf", "%lf");
+        //scanf(acceptString, &coefficients[coefficientindex][0], &coefficients[coefficientindex][1]);
         // Catch "\n".
-        getchar();
+        //getchar();
     }
     printf("\nResult:\n");
     for (int printIndex = 0; printIndex <= order; printIndex++) {
@@ -42,12 +44,20 @@ int main(void) {
 
     // INITIAL
 
-    double initial[1][2];
+    double initial[2];
+    initial[0] = 5.0;
+    initial[1] = 2.0;
+    int power = 3;
+    double * result;
+    result = complex_power(initial, power);
 
-    sprintf(acceptString, "initial = %s %s", "%lf", "%lf");
-    scanf(acceptString, &initial[0][0], &initial[0][1]);
+
+    printf("result: %lf + i%lf", result[0], result[1]);
+    free(result);
+    //sprintf(acceptString, "initial = %s %s", "%lf", "%lf");
+    //scanf(acceptString, &initial[0], &initial[1]);
     // Catch "\n".
-    getchar();
+    //getchar();
 
 /*  printf("epsilon : %e\n", epsilon);
     printf("oeder : %d\n", order);
@@ -57,10 +67,31 @@ int main(void) {
 
 
 
+
     return 0;
 }
 
-double ** calculate_derivative(double ** coefficient, int order){
+double * apply_function(double ** coefficient, int order, double * value) {
+    return 0.0;
+}
+
+double * complex_power(double * complex, int power) {
+    // Base values.
+    double radius = sqrt(complex[0] * complex[0] + complex[1] * complex[1]);
+    double thetha = atan(complex[1] / complex[0]);
+    // Apply.
+    radius = powf(radius, power);
+    thetha = thetha * power;
+
+    // Convert back to standard representation.
+    double * result = (double *) malloc(2 * sizeof(double));
+    result[0] = radius * (cos(thetha));
+    result[1] = radius * (sin(thetha));
+    return result;
+}
+
+
+double ** calculate_derivative(double ** coefficient, int order) {
     for(int index = 0; index < order; index++){
         coefficient[index][0] = order * coefficient[index][0];
         coefficient[index][1] = order * coefficient[index][1];
