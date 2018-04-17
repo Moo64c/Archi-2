@@ -71,10 +71,33 @@ int main(void) {
     return 0;
 }
 
+/**
+ * Gets the result of applying a polynomial function with a specific value.
+ */
 double * apply_function(double ** coefficient, int order, double * value) {
-    return 0.0;
+    //
+    double * result = (double *) malloc(2 * sizeof(double));
+    result[0] = 0.0;
+    result[1] = 0.0;
+    for (int index = 0; index <= order; index++) {
+        // Calculate value ^ (current order) * coefficient.
+        double * step = complex_power(value, index);
+
+        // FIXME (this is wrong).
+        step[0] = step[0] * coefficient[index][0];
+        step[1] = step[1] * coefficient[index][1];
+        // A
+        result[0] += step[0];
+        result[1] += step[1];
+    }
+
+
+    return 0;
 }
 
+/**
+ * Calculates raising a complex number to the power specified.
+ */
 double * complex_power(double * complex, int power) {
     // Base values.
     double radius = sqrt(complex[0] * complex[0] + complex[1] * complex[1]);
@@ -91,6 +114,9 @@ double * complex_power(double * complex, int power) {
 }
 
 
+/**
+ * Gets a derivative of a coefficient representation of a polynom.
+ */
 double ** calculate_derivative(double ** coefficient, int order) {
     for(int index = 0; index < order; index++){
         coefficient[index][0] = order * coefficient[index][0];
