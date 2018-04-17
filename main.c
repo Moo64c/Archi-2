@@ -7,8 +7,8 @@
 #include <math.h>
 
 double * power_complex(double * complex, int power);
-double * add_complex(double * complex1, double * complex2)
-double * subtract_complex(double * complex1, double * complex2)
+double * add_complex(double * complex1, double * complex2);
+double * subtract_complex(double * complex1, double * complex2);
 double * multiply_complex(double * complex1, double * complex2);
 double * divide_complex(double * complex1, double * complex2);
 double * invert_complex(double * complex);
@@ -53,16 +53,12 @@ int main(void) {
 
     printf("\n");
 
-<<<<<<< HEAD
-    double * result = apply_function(coeff, 2, value);
-=======
     // INITIAL
 
     sprintf(acceptString, "initial = %s %s", "%lf", "%lf");
     scanf(acceptString, &initial[0], &initial[1]);
     // Catch "\n".
     getchar();
->>>>>>> c97c085694b75cd25ce632b9754db279570890a2
 
     return 0;
 }
