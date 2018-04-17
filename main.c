@@ -1,11 +1,14 @@
 // Global debug variable.
 #define debug 0
+#define RUN_LIMIT 10
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
 
+void print_polynomial(double ** coefficients, int order);
+void print_complex(double * complex);
 double * power_complex(double * complex, int power);
 double * add_complex(double * complex1, double * complex2);
 double * subtract_complex(double * complex1, double * complex2);
@@ -21,7 +24,6 @@ int main(void) {
     double epsilon = 0;
     int order = 0;
     double initial[2];
-    // To be allocated later.
 
     // Tolerance.
     scanf("epsilon = %lf\n", &epsilon);
@@ -40,32 +42,63 @@ int main(void) {
 
     char acceptString[200];
     for (int coefficientindex = order; coefficientindex >= 0; coefficientindex--) {
-        sprintf(acceptString, "coeff %d = %s %s", coefficientindex, "%lf", "%lf");
+        sprintf(acceptString, "coeff %d = %s %s\n", coefficientindex, "%lf", "%lf");
         scanf(acceptString, &coefficients[coefficientindex][0], &coefficients[coefficientindex][1]);
-        // Catch "\n".
-        getchar();
     }
-    printf("\nResult:\n");
-    for (int printIndex = 0; printIndex <= order; printIndex++) {
-        printf("(%lf + %lf) * x ^ %d ", coefficients[printIndex][0], coefficients[printIndex][1], printIndex);
+    if (debug > 0) {
+      printf("epsilon: %e\norder: %d", epsilon, order);
+      printf("\nResult:\n");
+      print_polynomial(coefficients, order);
     }
 
-    printf("\n");
-
-    // INITIAL
-
-    sprintf(acceptString, "initial = %s %s", "%lf", "%lf");
+    sprintf(acceptString, "initial = %s %s\n", "%lf", "%lf");
     scanf(acceptString, &initial[0], &initial[1]);
-    // Catch "\n".
-    getchar();
+
+    int runs = 0;
+    double * last;
+    double * current = &initial;
+    double * current_value = apply_function(coefficients, order, current);
+    double distance = sqrt(current_value[0] * current_value[0] + current_value[1] * current_value[1]);
+
+    // print_complex(current_value);
+    // printf("%d: distance: %lf\n", 0,  distance);
+
+    while ((distance > epsilon) && (runs < RUN_LIMIT)) {
+      last = current;
+      current = newton_step(coefficients, order, last);
+      current_value = apply_function(coefficients, order, current);
+      //free(last);
+      distance = sqrt(current_value[0] * current_value[0] + current_value[1] * current_value[1]);
+      runs++;
+      // printf("%d: New distance: %lf\n", runs,  distance);
+      // print_complex(current_value);
+    }
+
+    // Done?
+    print_complex(current);
+    //free(current);
 
     return 0;
 }
 
 /**
+ * Debug - print the polynomial equation.
+ */
+void print_polynomial(double ** coefficients, int order) {
+  for (int printIndex = 0; printIndex <= order; printIndex++) {
+    printf("(%lf + %lf) * x^%d", coefficients[printIndex][0], coefficients[printIndex][1], printIndex);
+  }
+  printf("\n");
+}
+
+void print_complex(double * complex) {
+  printf("%lf %lfi\n", complex[0], complex[1]);
+}
+
+/**
  * Gets the result of applying a polynomial function with a specific value.
  */
-double * apply_function(double ** coefficient, int order, double * value) {
+double * apply_function(double ** coefficients, int order, double * value) {
     //
     double * result = (double *) malloc(2 * sizeof(double));
     result[0] = 0.0;
@@ -73,7 +106,7 @@ double * apply_function(double ** coefficient, int order, double * value) {
     for (int index = 0; index <= order; index++) {
         // Calculate value ^ (current order) * coefficient.
         double * step = power_complex(value, index);
-        step = multiply_complex(step, coefficient[index]) ;
+        step = multiply_complex(step, coefficients[index]) ;
         // A
         result[0] += step[0];
         result[1] += step[1];
@@ -84,9 +117,11 @@ double * apply_function(double ** coefficient, int order, double * value) {
     return result;
 }
 
+/**
+ * Multiply two complex numbers.
+ */
 double * multiply_complex(double * complex1, double * complex2) {
     double * result = (double *) malloc(2 * sizeof(double));
-    fprintf(stderr, "\n%lf %lf\n", complex1[0], complex2[0]);
     result[0] = complex1[0] * complex2[0] - complex1[1] * complex2[1];
     result[1] = complex1[0] * complex2[1] + complex1[1] * complex2[0];
     return result;
@@ -96,22 +131,24 @@ double * multiply_complex(double * complex1, double * complex2) {
  * Calculates raising a complex number to the power specified.
  */
 double * power_complex(double * complex, int power) {
+  // Like Kanye
     double * result = (double *) malloc(2 * sizeof(double));
 
     if (power == 0) {
+      // Special case.
         result[0] = 1.0;
         result[1] = 0.0;
         return result;
     }
 
-    // Base values.
+    // Polar notation of the complex number.
     double radius = sqrt(complex[0] * complex[0] + complex[1] * complex[1]);
     double thetha = atan(complex[1] / complex[0]);
     // Apply.
     radius = powf(radius, power);
     thetha = thetha * power;
 
-    // Convert back to standard representation.;
+    // Convert back to standard notation.
     result[0] = radius * (cos(thetha));
     result[1] = radius * (sin(thetha));
     return result;
@@ -122,10 +159,8 @@ double * power_complex(double * complex, int power) {
  * Gets a derivative of a coefficient representation of a polynom.
  */
 double ** calculate_derivative(double ** coefficient, int order) {
-    fprintf(stderr, "foo \n");
     double ** derivative = (double **) malloc((order) * sizeof(double));
     for(int index = 1; index <= order ; index++){
-        fprintf(stderr, "index %d\n", index);
         derivative[index-1] = (double *) malloc(2 * sizeof(double));
         derivative[index-1][0] = index * coefficient[index][0];
         derivative[index-1][1] = index * coefficient[index][1];
@@ -145,8 +180,13 @@ double * divide_complex(double * complex1, double * complex2) {
     double norma = powf(complex2[0], 2) + powf(complex2[1], 2);
     // (a+bi) / (c+di) = ((a+bi)*(c-di))/((c+di)(c-di)) = ((a+bi)*(c-di))/(c^2 +d^2)
 
+    printf("dividing by %lf\n", norma);
+    print_complex(result);
+
     result[0] = result[0] / norma;
     result[1] = result[1] / norma;
+    printf("divide result:\n");
+    print_complex(result);
     // Cleanup.
     free(inverted_denominator);
     return result;
@@ -166,9 +206,14 @@ double * add_complex(double * complex1, double * complex2) {
  * Subtract complex2 from complex1.
  */
 double * subtract_complex(double * complex1, double * complex2) {
+  if (debug > 0) {
+    printf("Subtracting: \n");
+    print_complex(complex1);
+    print_complex(complex2);
+  }
   double * result = (double *) malloc(2 * sizeof(double));
-  result[0] = complex2[0] - complex1[0];
-  result[1] = complex2[1] - complex1[1];
+  result[0] = complex1[0] - complex2[0];
+  result[1] = complex1[1] - complex2[1];
   return result;
 }
 
@@ -191,12 +236,21 @@ double * newton_step(double ** coefficient, int order, double * current_value) {
   double * result = (double *) malloc(2 * sizeof(double));
   double ** derivative = calculate_derivative(coefficient, order);
 
-  result = subtract_complex(current_value,
-    divide_complex(
-      apply_function(coefficient, order, current_value),
-      apply_function(derivative, order - 1, current_value)
-    )
-  );
+  double * function_value = apply_function(coefficient, order, current_value);
+  printf("function value: ");
+  print_complex(function_value);
+  double * derivative_value = apply_function(derivative, order - 1, current_value);
+  printf("derivative_value: ");
+  print_complex(derivative_value);
+
+  double * divide_result = divide_complex(function_value,derivative_value);
+  print_complex(divide_result);
+  
+  result = subtract_complex(current_value, divide_result);
+  printf("Divide_result: ");
+
+  printf("Subtracting divide result from original value.");
+  print_complex(result);
 
   return result;
 }
