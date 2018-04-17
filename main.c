@@ -56,27 +56,20 @@ int main(void) {
 
     int runs = 0;
     double * last;
-    double * current = &initial;
+    double * current = initial;
     double * current_value = apply_function(coefficients, order, current);
     double distance = sqrt(current_value[0] * current_value[0] + current_value[1] * current_value[1]);
-
-    // print_complex(current_value);
-    // printf("%d: distance: %lf\n", 0,  distance);
 
     while ((distance > epsilon) && (runs < RUN_LIMIT)) {
       last = current;
       current = newton_step(coefficients, order, last);
       current_value = apply_function(coefficients, order, current);
-      //free(last);
       distance = sqrt(current_value[0] * current_value[0] + current_value[1] * current_value[1]);
       runs++;
-      // printf("%d: New distance: %lf\n", runs,  distance);
-      // print_complex(current_value);
     }
 
     // Done?
     print_complex(current);
-    //free(current);
 
     return 0;
 }
@@ -104,14 +97,14 @@ double * apply_function(double ** coefficients, int order, double * value) {
     result[0] = 0.0;
     result[1] = 0.0;
     for (int index = 0; index <= order; index++) {
-        // Calculate value ^ (current order) * coefficient.
-        double * step = power_complex(value, index);
-        step = multiply_complex(step, coefficients[index]) ;
-        // A
-        result[0] += step[0];
-        result[1] += step[1];
-        // Cleanp.
-        free(step);
+      // Calculate value ^ (current order) * coefficient.
+      double * step = power_complex(value, index);
+      step = multiply_complex(step, coefficients[index]) ;
+      // A
+      result[0] += step[0];
+      result[1] += step[1];
+      // Cleanp.
+      free(step);
     }
 
     return result;
@@ -143,9 +136,9 @@ double * power_complex(double * complex, int power) {
 
     // Polar notation of the complex number.
     double radius = sqrt(complex[0] * complex[0] + complex[1] * complex[1]);
-    double thetha = atan(complex[1] / complex[0]);
+    double thetha = atan2(complex[1], complex[0]);
     // Apply.
-    radius = powf(radius, power);
+    radius = pow(radius, (double) power);
     thetha = thetha * power;
 
     // Convert back to standard notation.
@@ -172,21 +165,16 @@ double ** calculate_derivative(double ** coefficient, int order) {
  * Divide complex1 by complex2.
  */
 double * divide_complex(double * complex1, double * complex2) {
-    double absolute_value = sqrt(complex2[0] * complex2[0] + complex2[1] * complex2[1]);
     double * result = (double *) malloc(2 * sizeof(double));
     double * inverted_denominator = invert_complex(complex2);
 
     result = multiply_complex(complex1, inverted_denominator);
-    double norma = powf(complex2[0], 2) + powf(complex2[1], 2);
+    double norma = pow(complex2[0], 2) + powf(complex2[1], 2);
     // (a+bi) / (c+di) = ((a+bi)*(c-di))/((c+di)(c-di)) = ((a+bi)*(c-di))/(c^2 +d^2)
-
-    printf("dividing by %lf\n", norma);
-    print_complex(result);
 
     result[0] = result[0] / norma;
     result[1] = result[1] / norma;
-    printf("divide result:\n");
-    print_complex(result);
+
     // Cleanup.
     free(inverted_denominator);
     return result;
@@ -214,6 +202,10 @@ double * subtract_complex(double * complex1, double * complex2) {
   double * result = (double *) malloc(2 * sizeof(double));
   result[0] = complex1[0] - complex2[0];
   result[1] = complex1[1] - complex2[1];
+  if (debug > 0) {
+    printf("Subtract result: \n");
+    print_complex(result);
+  }
   return result;
 }
 
@@ -232,25 +224,24 @@ double * invert_complex(double * complex) {
 /**
  * Create next Z_n in the Newton-Raphson analysis.
  */
-double * newton_step(double ** coefficient, int order, double * current_value) {
+double * newton_step(double ** coefficients, int order, double * current_value) {
   double * result = (double *) malloc(2 * sizeof(double));
-  double ** derivative = calculate_derivative(coefficient, order);
 
-  double * function_value = apply_function(coefficient, order, current_value);
-  printf("function value: ");
-  print_complex(function_value);
+  // f'
+  double ** derivative = calculate_derivative(coefficients, order);
+
+  double * function_value = apply_function(coefficients, order, current_value);
   double * derivative_value = apply_function(derivative, order - 1, current_value);
-  printf("derivative_value: ");
-  print_complex(derivative_value);
+  // f(z_n) / f'(z_n).
+  double * divide_result = divide_complex(function_value, derivative_value);
 
-  double * divide_result = divide_complex(function_value,derivative_value);
-  print_complex(divide_result);
-  
+  // Clean up.
+  free(function_value);
+  free(derivative_value);
+
+  // z_n - (f(z_n) / f'(z_n)).
   result = subtract_complex(current_value, divide_result);
-  printf("Divide_result: ");
-
-  printf("Subtracting divide result from original value.");
-  print_complex(result);
+  free(divide_result);
 
   return result;
 }
