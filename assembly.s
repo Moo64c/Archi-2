@@ -12,63 +12,78 @@ section .text
 ; ==== Power complex ====
 
 power_complex:
-.LFB7:
-push	rbp
-mov	  rbp, rsp
-sub 	rsp, 32
-mov	  [rbp - 24], rdi
-mov	  [rbp - 28], esi
-mov	  edi, 16
-call	malloc
+  push	rbp
+  mov	  rbp, rsp
 
-mov	 [rbp - 16], rax
-cmp  word[rbp - 28], 0
-jg	.L24
-mov	rax, [rbp - 16]
-movsd	xmm0, [_1]
-movsd	[rax], xmm0
-mov	rax, [rbp - 16]
-add	rax, 8
-pxor	xmm0, xmm0
-movsd	[rax], xmm0
-mov	rax, [rbp - 16]
-jmp	.L25
-.L24:
-cmp	word[rbp - 28], 1
-jne	.L26
-mov	rax, [rbp -24]
-movsd	xmm0, [rax]
-mov	rax, [rbp - 16]
-movsd	[rax], xmm0
-mov	rax, [rbp - 16]
-lea rdx, [rax + 8]
-mov	rax, [rbp - 24]
-movsd	xmm0, [rax + 8]
-movsd	[rdx], xmm0
-mov	rax, [rbp - 16]
-jmp	.L25
-.L26:
-mov	rax, [rbp - 16]
-mov	rdi, rax
-call	free
-mov	 eax, [rbp - 28]
-lea	edx, [rax -1]
-mov	rax, [rbp - 24]
-mov	esi, edx
-mov	rdi, rax
-call	power_complex
-mov	[rbp - 8], rax
-mov	rdx, [rbp - 24]
-mov	rax, [rbp - 8]
-mov	rsi, rdx
-mov	rdi, rax
-call multiply_complex
-mov	[rbp - 16], rax
-mov	rax, [rbp - 8]
-mov	rdi, rax
-call	free
-mov	rax, [rbp - 16]
-.L25:
+  ; Extend stack & get parameters.
+  sub 	rsp, 32
+  mov	  [rbp - 24], rdi
+  mov	  [rbp - 28], esi
+
+  ; Create container for a result.
+  mov	  edi, 16
+  call	malloc
+  mov	 [rbp - 16], rax
+
+  ; Check power == 0 ?
+  cmp  word[rbp - 28], 0
+  jg	.not_zero
+  ; Power == 0.
+  ; Return 1.0 0.0i .
+  mov	rax, [rbp - 16]
+  movsd	xmm0, [_1]
+  movsd	[rax], xmm0
+  mov	rax, [rbp - 16]
+  add	rax, 8
+  pxor	xmm0, xmm0
+  movsd	[rax], xmm0
+  mov	rax, [rbp - 16]
+  jmp	.end
+
+  .not_zero:
+  ; Check power == 1 ?
+  cmp	word[rbp - 28], 1
+  jne	.not_one
+  ; Power == 1.
+  ; Return a copy of the value passed.
+  mov	rax, [rbp -24]
+  movsd	xmm0, [rax]
+  mov	rax, [rbp - 16]
+  movsd	[rax], xmm0
+  mov	rax, [rbp - 16]
+  lea rdx, [rax + 8]
+  mov	rax, [rbp - 24]
+  movsd	xmm0, [rax + 8]
+  movsd	[rdx], xmm0
+  mov	rax, [rbp - 16]
+  jmp	.end
+  .not_one:
+  ; Power > 1
+  ; Clear result container.
+  mov	rdi, [rbp - 16]
+  call	free
+
+  ; Call power_complex recursively.
+  mov	eax, [rbp - 28]
+  ; Power--;
+  lea	edx, [rax - 1]
+  mov	esi, edx
+  mov	rdi, [rbp - 24]
+  call	power_complex
+  mov	[rbp - 8], rax
+
+  ; Multiply result by the value passed.
+  mov	rsi, [rbp - 24]
+  mov	rdi, rax
+  call multiply_complex
+  mov	[rbp - 16], rax
+
+  ; Free allocated memory in multiply_complex.
+  mov	rdi, [rbp - 8]
+  call free
+
+  mov	rax, [rbp - 16]
+.end:
   leave
   ret
 ; ==== Invert complex ====
