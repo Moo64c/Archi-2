@@ -10,13 +10,11 @@
 extern double * invert_complex(double *);
 extern double * add_complex(double *, double *);
 extern double * subtract_complex(double *, double *);
-
+extern double * multiply_complex(double *, double *);
+extern double * power_complex(double *, int);
 
 void print_polynomial(double ** coefficients, int order);
 void print_complex(double * complex);
-double * power_complex(double * complex, int power);
-//double * add_complex(double * complex1, double * complex2);
-double * multiply_complex(double * complex1, double * complex2);
 double * divide_complex(double * complex1, double * complex2);
 double * apply_function(double ** coefficient, int order, double * value);
 double * newton_step(double ** coefficient, int order, double * current_value);
@@ -72,6 +70,7 @@ int main(void) {
     }
 
     // Done?
+    printf("root = ");
     print_complex(current);
 
     return 0;
@@ -117,47 +116,6 @@ double * apply_function(double ** coefficients, int order, double * value) {
 }
 
 /**
- * Multiply two complex numbers.
- */
-double * multiply_complex(double * complex1, double * complex2) {
-    double * result = (double *) malloc(2 * sizeof(double));
-    result[0] = complex1[0] * complex2[0] - complex1[1] * complex2[1];
-    result[1] = complex1[0] * complex2[1] + complex1[1] * complex2[0];
-    return result;
-}
-
-/**
- * Calculates raising a complex number to the power specified.
- */
-double * power_complex(double * complex, int power) {
-  // Like Kanye
-    double * result = (double *) malloc(2 * sizeof(double));
-
-    if (power <= 0) {
-      // Special case.
-        result[0] = 1.0;
-        result[1] = 0.0;
-        return result;
-    }
-
-    if (power == 1) {
-      result[0] = complex[0];
-      result[1] = complex[1];
-      return result;
-    }
-
-    // Else - power > 1... recursive call.
-    free(result);
-    double * recursive_result = power_complex(complex, power - 1);
-    result = multiply_complex(recursive_result, complex);
-
-    // Clean up.
-    free(recursive_result);
-    return result;
-}
-
-
-/**
  * Gets a derivative of a coefficient representation of a polynom.
  */
 double ** calculate_derivative(double ** coefficient, int order) {
@@ -190,51 +148,6 @@ double * divide_complex(double * complex1, double * complex2) {
     free(inverted_denominator);
     return result;
 }
-
-/**
- * Add two complex numbers.
- */
- /*
-double * add_complex(double * complex1, double * complex2) {
-  double * result = (double *) malloc(2 * sizeof(double));
-  result[0] = complex1[0] + complex2[0];
-  result[1] = complex1[1] + complex2[1];
-  return result;
-}*/
-
-/**
- * Subtract complex2 from complex1.
- */
-/*
-double * subtract_complex(double * complex1, double * complex2) {
-  if (debug > 0) {
-    printf("Subtracting: \n");
-    print_complex(complex1);
-    print_complex(complex2);
-  }
-  double * result = (double *) malloc(2 * sizeof(double));
-  result[0] = complex1[0] - complex2[0];
-  result[1] = complex1[1] - complex2[1];
-  if (debug > 0) {
-    printf("Subtract result: \n");
-    print_complex(result);
-  }
-  return result;
-}
-*/
-/**
- * Get invert of a complex value.
- */
- /*
-double * invert_complex(double * complex) {
-  double * result = (double *) malloc(2 * sizeof(double));
-
-  result[0] = complex[0];
-  result[1] = 0.0 - complex[1];
-
-  return result;
-}
-*/
 
 /**
  * Create next Z_n in the Newton-Raphson analysis.
