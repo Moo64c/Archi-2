@@ -1,5 +1,5 @@
-all: bin/assembly.o
-	gcc -o main -g -Wall -fno-omit-frame-pointer main.c bin/assembly.o -lm 
+all: clean bin/assembly.o
+	gcc -o main -g -Wall -fno-omit-frame-pointer main.c bin/assembly.o -lm
 
 bin/assembly.o:
 	mkdir -p bin
