@@ -7,19 +7,16 @@
 #include <string.h>
 #include <math.h>
 
-//extern double * invert_complex(double *);
-extern double * add_complex(double *, double *);
-extern double * subtract_complex(double *, double *);
-
+extern double * invert_complex(double *);
 
 void print_polynomial(double ** coefficients, int order);
 void print_complex(double * complex);
 double * power_complex(double * complex, int power);
-//double * add_complex(double * complex1, double * complex2);
-//double * subtract_complex(double * complex1, double * complex2);
+double * add_complex(double * complex1, double * complex2);
+double * subtract_complex(double * complex1, double * complex2);
 double * multiply_complex(double * complex1, double * complex2);
 double * divide_complex(double * complex1, double * complex2);
-double * invert_complex(double * complex);
+//double * invert_complex(double * complex);
 double * apply_function(double ** coefficient, int order, double * value);
 double * newton_step(double ** coefficient, int order, double * current_value);
 double ** calculate_derivative(double ** coefficient, int order);
@@ -74,6 +71,7 @@ int main(void) {
     }
 
     // Done?
+    printf("root = ");
     print_complex(current);
 
     return 0;
@@ -174,8 +172,8 @@ double ** calculate_derivative(double ** coefficient, int order) {
  */
 double * divide_complex(double * complex1, double * complex2) {
     double * result = (double *) malloc(2 * sizeof(double));
+    // print_complex(complex2);
     double * inverted_denominator = invert_complex(complex2);
-
     print_complex(inverted_denominator);
 
     result = multiply_complex(complex1, inverted_denominator);
@@ -193,17 +191,16 @@ double * divide_complex(double * complex1, double * complex2) {
 /**
  * Add two complex numbers.
  */
-/*double * add_complex(double * complex1, double * complex2) {
+double * add_complex(double * complex1, double * complex2) {
   double * result = (double *) malloc(2 * sizeof(double));
   result[0] = complex1[0] + complex2[0];
   result[1] = complex1[1] + complex2[1];
   return result;
-}*/
+}
 
 /**
  * Subtract complex2 from complex1.
  */
- /*
 double * subtract_complex(double * complex1, double * complex2) {
   if (debug > 0) {
     printf("Subtracting: \n");
@@ -218,11 +215,11 @@ double * subtract_complex(double * complex1, double * complex2) {
     print_complex(result);
   }
   return result;
-}*/
+}
 
 /**
  * Get invert of a complex value.
- */
+ *
 double * invert_complex(double * complex) {
   double * result = (double *) malloc(2 * sizeof(double));
 
@@ -230,7 +227,7 @@ double * invert_complex(double * complex) {
   result[1] = 0.0 - complex[1];
 
   return result;
-}
+} */
 
 /**
  * Create next Z_n in the Newton-Raphson analysis.
