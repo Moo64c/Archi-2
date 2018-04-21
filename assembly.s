@@ -13,51 +13,56 @@ section .text
 apply_function:
 	push rbp
 	mov	rbp, rsp
-	sub rsp, 64
 
+  ; Allocate 64 bytes and pull parameters.
+  sub rsp, 64
 	mov	[rbp - 40], rdi
 	mov	[rbp - 44], esi
 	mov	[rbp - 56], rdx
+
+  ; Result container.
 	mov	edi, 16
 	call	malloc
 	mov	[rbp - 16], rax
 
-	mov	rax, [rbp - 16]
+  ; Init  0 = result[0], result[1]
 	pxor	xmm0, xmm0
 	movsd	[rax], xmm0
-	mov	rax, [rbp - 16]
 	add	rax, 8
-	pxor	xmm0, xmm0
 	movsd	[rax], xmm0
 	mov	word[rbp - 20], 0
-	jmp	.L18
-.L19:
+	jmp	.check_loop_condition
+.loop_start:
+  ; Raise the value by the current order.
 	mov	edx, [rbp - 20]
 	mov	rax, [rbp - 56]
 	mov	esi, edx
 	mov	rdi, rax
 	call power_complex
 	mov	[rbp - 8], rax
+
+  ; Extend result.
 	mov	eax, [rbp - 20]
 	cdqe
 	lea	rdx, [rax * 8]
+
+  ; Multiply (value)^order by the coefficient.
 	mov	rax, [rbp - 40]
 	add	rax, rdx
 	mov	rdx, [rax]
-	mov	rax, [rbp - 8]
 	mov	rsi, rdx
-	mov	rdi, rax
+	mov	rdi, [rbp - 8]
 	call multiply_complex
 	mov	[rbp - 8], rax
 
+  ; Add the result to current values in the result contianer.
+  movsd	xmm0, [rax]
 	mov	rax, [rbp - 16]
 	movsd	xmm1, [rax]
-	mov	rax, [rbp - 8]
-	movsd	xmm0, [rax]
 	addsd	xmm0, xmm1
-	mov	rax, [rbp - 16]
 	movsd	[rax], xmm0
-	mov	rax, [rbp - 16]
+
+  ; Do the imaginery part as well.
 	add	rax, 8
 	mov	rdx, [rbp - 16]
 	add rdx, 8
@@ -67,14 +72,18 @@ apply_function:
 	movsd	xmm0, [rdx]
 	addsd	xmm0, xmm1
 	movsd	[rax], xmm0
+  ; Clear used temperories.
 	mov	rdi, [rbp - 8]
 	call free
 
+  ; index++
 	add	word[rbp - 20], 1
-.L18:
+.check_loop_condition:
+  ; index > order ?
 	mov	eax, [rbp - 20]
 	cmp	eax, [rbp - 44]
-	jle	.L19
+	jle	.loop_start
+  ; End loop, return result.
 	mov	rax, [rbp - 16]
 	leave
 	ret
