@@ -1,4 +1,5 @@
 	.file	"main.c"
+	.intel_syntax noprefix
 	.text
 .Ltext0:
 	.section	.rodata
@@ -22,243 +23,243 @@ main:
 	.file 1 "main.c"
 	.loc 1 23 0
 	.cfi_startproc
-	pushq	%rbp
+	push	rbp
 	.cfi_def_cfa_offset 16
 	.cfi_offset 6, -16
-	movq	%rsp, %rbp
+	mov	rbp, rsp
 	.cfi_def_cfa_register 6
-	pushq	%rbx
-	subq	$296, %rsp
+	push	rbx
+	sub	rsp, 296
 	.cfi_offset 3, -24
 	.loc 1 23 0
-	movq	%fs:40, %rax
-	movq	%rax, -24(%rbp)
-	xorl	%eax, %eax
+	mov	rax, QWORD PTR fs:40
+	mov	QWORD PTR [rbp-24], rax
+	xor	eax, eax
 	.loc 1 25 0
-	pxor	%xmm0, %xmm0
-	movsd	%xmm0, -288(%rbp)
+	pxor	xmm0, xmm0
+	movsd	QWORD PTR [rbp-288], xmm0
 	.loc 1 26 0
-	movl	$0, -304(%rbp)
+	mov	DWORD PTR [rbp-304], 0
 	.loc 1 30 0
-	leaq	-288(%rbp), %rax
-	movq	%rax, %rsi
-	movl	$.LC1, %edi
-	movl	$0, %eax
+	lea	rax, [rbp-288]
+	mov	rsi, rax
+	mov	edi, OFFSET FLAT:.LC1
+	mov	eax, 0
 	call	__isoc99_scanf
 	.loc 1 33 0
-	leaq	-304(%rbp), %rax
-	movq	%rax, %rsi
-	movl	$.LC2, %edi
-	movl	$0, %eax
+	lea	rax, [rbp-304]
+	mov	rsi, rax
+	mov	edi, OFFSET FLAT:.LC2
+	mov	eax, 0
 	call	__isoc99_scanf
 	.loc 1 37 0
-	movl	-304(%rbp), %eax
-	addl	$1, %eax
-	cltq
-	salq	$3, %rax
-	movq	%rax, %rdi
+	mov	eax, DWORD PTR [rbp-304]
+	add	eax, 1
+	cdqe
+	sal	rax, 3
+	mov	rdi, rax
 	call	malloc
-	movq	%rax, -264(%rbp)
+	mov	QWORD PTR [rbp-264], rax
 .LBB2:
 	.loc 1 38 0
-	movl	$0, -300(%rbp)
+	mov	DWORD PTR [rbp-300], 0
 	jmp	.L2
 .L3:
 	.loc 1 39 0 discriminator 3
-	movl	-300(%rbp), %eax
-	cltq
-	leaq	0(,%rax,8), %rdx
-	movq	-264(%rbp), %rax
-	leaq	(%rdx,%rax), %rbx
-	movl	$16, %edi
+	mov	eax, DWORD PTR [rbp-300]
+	cdqe
+	lea	rdx, [0+rax*8]
+	mov	rax, QWORD PTR [rbp-264]
+	lea	rbx, [rdx+rax]
+	mov	edi, 16
 	call	malloc
-	movq	%rax, (%rbx)
+	mov	QWORD PTR [rbx], rax
 	.loc 1 40 0 discriminator 3
-	movl	-300(%rbp), %eax
-	cltq
-	leaq	0(,%rax,8), %rdx
-	movq	-264(%rbp), %rax
-	addq	%rdx, %rax
-	movq	(%rax), %rax
-	pxor	%xmm0, %xmm0
-	movsd	%xmm0, (%rax)
+	mov	eax, DWORD PTR [rbp-300]
+	cdqe
+	lea	rdx, [0+rax*8]
+	mov	rax, QWORD PTR [rbp-264]
+	add	rax, rdx
+	mov	rax, QWORD PTR [rax]
+	pxor	xmm0, xmm0
+	movsd	QWORD PTR [rax], xmm0
 	.loc 1 41 0 discriminator 3
-	movl	-300(%rbp), %eax
-	cltq
-	leaq	0(,%rax,8), %rdx
-	movq	-264(%rbp), %rax
-	addq	%rdx, %rax
-	movq	(%rax), %rax
-	addq	$8, %rax
-	pxor	%xmm0, %xmm0
-	movsd	%xmm0, (%rax)
+	mov	eax, DWORD PTR [rbp-300]
+	cdqe
+	lea	rdx, [0+rax*8]
+	mov	rax, QWORD PTR [rbp-264]
+	add	rax, rdx
+	mov	rax, QWORD PTR [rax]
+	add	rax, 8
+	pxor	xmm0, xmm0
+	movsd	QWORD PTR [rax], xmm0
 	.loc 1 38 0 discriminator 3
-	addl	$1, -300(%rbp)
+	add	DWORD PTR [rbp-300], 1
 .L2:
 	.loc 1 38 0 is_stmt 0 discriminator 1
-	movl	-304(%rbp), %eax
-	addl	$1, %eax
-	cmpl	-300(%rbp), %eax
+	mov	eax, DWORD PTR [rbp-304]
+	add	eax, 1
+	cmp	eax, DWORD PTR [rbp-300]
 	jg	.L3
 .LBE2:
 .LBB3:
 	.loc 1 45 0 is_stmt 1
-	movl	-304(%rbp), %eax
-	movl	%eax, -296(%rbp)
+	mov	eax, DWORD PTR [rbp-304]
+	mov	DWORD PTR [rbp-296], eax
 	jmp	.L4
 .L5:
 	.loc 1 46 0 discriminator 3
-	movl	-296(%rbp), %edx
-	leaq	-224(%rbp), %rax
-	movl	$.LC3, %r8d
-	movl	$.LC3, %ecx
-	movl	$.LC4, %esi
-	movq	%rax, %rdi
-	movl	$0, %eax
+	mov	edx, DWORD PTR [rbp-296]
+	lea	rax, [rbp-224]
+	mov	r8d, OFFSET FLAT:.LC3
+	mov	ecx, OFFSET FLAT:.LC3
+	mov	esi, OFFSET FLAT:.LC4
+	mov	rdi, rax
+	mov	eax, 0
 	call	sprintf
 	.loc 1 47 0 discriminator 3
-	movl	-296(%rbp), %eax
-	cltq
-	leaq	0(,%rax,8), %rdx
-	movq	-264(%rbp), %rax
-	addq	%rdx, %rax
-	movq	(%rax), %rax
-	leaq	8(%rax), %rdx
-	movl	-296(%rbp), %eax
-	cltq
-	leaq	0(,%rax,8), %rcx
-	movq	-264(%rbp), %rax
-	addq	%rcx, %rax
-	movq	(%rax), %rcx
-	leaq	-224(%rbp), %rax
-	movq	%rcx, %rsi
-	movq	%rax, %rdi
-	movl	$0, %eax
+	mov	eax, DWORD PTR [rbp-296]
+	cdqe
+	lea	rdx, [0+rax*8]
+	mov	rax, QWORD PTR [rbp-264]
+	add	rax, rdx
+	mov	rax, QWORD PTR [rax]
+	lea	rdx, [rax+8]
+	mov	eax, DWORD PTR [rbp-296]
+	cdqe
+	lea	rcx, [0+rax*8]
+	mov	rax, QWORD PTR [rbp-264]
+	add	rax, rcx
+	mov	rcx, QWORD PTR [rax]
+	lea	rax, [rbp-224]
+	mov	rsi, rcx
+	mov	rdi, rax
+	mov	eax, 0
 	call	__isoc99_scanf
 	.loc 1 45 0 discriminator 3
-	subl	$1, -296(%rbp)
+	sub	DWORD PTR [rbp-296], 1
 .L4:
 	.loc 1 45 0 is_stmt 0 discriminator 1
-	cmpl	$0, -296(%rbp)
+	cmp	DWORD PTR [rbp-296], 0
 	jns	.L5
 .LBE3:
 	.loc 1 55 0 is_stmt 1
-	leaq	-224(%rbp), %rax
-	movl	$.LC3, %ecx
-	movl	$.LC3, %edx
-	movl	$.LC5, %esi
-	movq	%rax, %rdi
-	movl	$0, %eax
+	lea	rax, [rbp-224]
+	mov	ecx, OFFSET FLAT:.LC3
+	mov	edx, OFFSET FLAT:.LC3
+	mov	esi, OFFSET FLAT:.LC5
+	mov	rdi, rax
+	mov	eax, 0
 	call	sprintf
 	.loc 1 56 0
-	leaq	-240(%rbp), %rax
-	leaq	8(%rax), %rdx
-	leaq	-240(%rbp), %rcx
-	leaq	-224(%rbp), %rax
-	movq	%rcx, %rsi
-	movq	%rax, %rdi
-	movl	$0, %eax
+	lea	rax, [rbp-240]
+	lea	rdx, [rax+8]
+	lea	rcx, [rbp-240]
+	lea	rax, [rbp-224]
+	mov	rsi, rcx
+	mov	rdi, rax
+	mov	eax, 0
 	call	__isoc99_scanf
 	.loc 1 58 0
-	movl	$0, -292(%rbp)
+	mov	DWORD PTR [rbp-292], 0
 	.loc 1 60 0
-	leaq	-240(%rbp), %rax
-	movq	%rax, -280(%rbp)
+	lea	rax, [rbp-240]
+	mov	QWORD PTR [rbp-280], rax
 	.loc 1 61 0
-	movl	-304(%rbp), %ecx
-	movq	-280(%rbp), %rdx
-	movq	-264(%rbp), %rax
-	movl	%ecx, %esi
-	movq	%rax, %rdi
+	mov	ecx, DWORD PTR [rbp-304]
+	mov	rdx, QWORD PTR [rbp-280]
+	mov	rax, QWORD PTR [rbp-264]
+	mov	esi, ecx
+	mov	rdi, rax
 	call	apply_function
-	movq	%rax, -256(%rbp)
+	mov	QWORD PTR [rbp-256], rax
 	.loc 1 62 0
-	movq	-256(%rbp), %rax
-	movsd	(%rax), %xmm1
-	movq	-256(%rbp), %rax
-	movsd	(%rax), %xmm0
-	mulsd	%xmm0, %xmm1
-	movq	-256(%rbp), %rax
-	addq	$8, %rax
-	movsd	(%rax), %xmm2
-	movq	-256(%rbp), %rax
-	addq	$8, %rax
-	movsd	(%rax), %xmm0
-	mulsd	%xmm2, %xmm0
-	addsd	%xmm1, %xmm0
+	mov	rax, QWORD PTR [rbp-256]
+	movsd	xmm1, QWORD PTR [rax]
+	mov	rax, QWORD PTR [rbp-256]
+	movsd	xmm0, QWORD PTR [rax]
+	mulsd	xmm1, xmm0
+	mov	rax, QWORD PTR [rbp-256]
+	add	rax, 8
+	movsd	xmm2, QWORD PTR [rax]
+	mov	rax, QWORD PTR [rbp-256]
+	add	rax, 8
+	movsd	xmm0, QWORD PTR [rax]
+	mulsd	xmm0, xmm2
+	addsd	xmm0, xmm1
 	call	sqrt
-	movq	%xmm0, %rax
-	movq	%rax, -272(%rbp)
+	movq	rax, xmm0
+	mov	QWORD PTR [rbp-272], rax
 	.loc 1 64 0
 	jmp	.L6
 .L9:
 	.loc 1 65 0
-	movq	-280(%rbp), %rax
-	movq	%rax, -248(%rbp)
+	mov	rax, QWORD PTR [rbp-280]
+	mov	QWORD PTR [rbp-248], rax
 	.loc 1 66 0
-	movl	-304(%rbp), %ecx
-	movq	-248(%rbp), %rdx
-	movq	-264(%rbp), %rax
-	movl	%ecx, %esi
-	movq	%rax, %rdi
+	mov	ecx, DWORD PTR [rbp-304]
+	mov	rdx, QWORD PTR [rbp-248]
+	mov	rax, QWORD PTR [rbp-264]
+	mov	esi, ecx
+	mov	rdi, rax
 	call	newton_step
-	movq	%rax, -280(%rbp)
+	mov	QWORD PTR [rbp-280], rax
 	.loc 1 67 0
-	movl	-304(%rbp), %ecx
-	movq	-280(%rbp), %rdx
-	movq	-264(%rbp), %rax
-	movl	%ecx, %esi
-	movq	%rax, %rdi
+	mov	ecx, DWORD PTR [rbp-304]
+	mov	rdx, QWORD PTR [rbp-280]
+	mov	rax, QWORD PTR [rbp-264]
+	mov	esi, ecx
+	mov	rdi, rax
 	call	apply_function
-	movq	%rax, -256(%rbp)
+	mov	QWORD PTR [rbp-256], rax
 	.loc 1 68 0
-	movq	-256(%rbp), %rax
-	movsd	(%rax), %xmm1
-	movq	-256(%rbp), %rax
-	movsd	(%rax), %xmm0
-	mulsd	%xmm0, %xmm1
-	movq	-256(%rbp), %rax
-	addq	$8, %rax
-	movsd	(%rax), %xmm2
-	movq	-256(%rbp), %rax
-	addq	$8, %rax
-	movsd	(%rax), %xmm0
-	mulsd	%xmm2, %xmm0
-	addsd	%xmm1, %xmm0
+	mov	rax, QWORD PTR [rbp-256]
+	movsd	xmm1, QWORD PTR [rax]
+	mov	rax, QWORD PTR [rbp-256]
+	movsd	xmm0, QWORD PTR [rax]
+	mulsd	xmm1, xmm0
+	mov	rax, QWORD PTR [rbp-256]
+	add	rax, 8
+	movsd	xmm2, QWORD PTR [rax]
+	mov	rax, QWORD PTR [rbp-256]
+	add	rax, 8
+	movsd	xmm0, QWORD PTR [rax]
+	mulsd	xmm0, xmm2
+	addsd	xmm0, xmm1
 	call	sqrt
-	movq	%xmm0, %rax
-	movq	%rax, -272(%rbp)
+	movq	rax, xmm0
+	mov	QWORD PTR [rbp-272], rax
 	.loc 1 69 0
-	addl	$1, -292(%rbp)
+	add	DWORD PTR [rbp-292], 1
 .L6:
 	.loc 1 64 0
-	movsd	-288(%rbp), %xmm1
-	movsd	-272(%rbp), %xmm0
-	ucomisd	%xmm1, %xmm0
+	movsd	xmm1, QWORD PTR [rbp-288]
+	movsd	xmm0, QWORD PTR [rbp-272]
+	ucomisd	xmm0, xmm1
 	jbe	.L7
 	.loc 1 64 0 is_stmt 0 discriminator 1
-	cmpl	$99, -292(%rbp)
+	cmp	DWORD PTR [rbp-292], 99
 	jle	.L9
 .L7:
 	.loc 1 73 0 is_stmt 1
-	movl	$.LC6, %edi
-	movl	$0, %eax
+	mov	edi, OFFSET FLAT:.LC6
+	mov	eax, 0
 	call	printf
 	.loc 1 74 0
-	movq	-280(%rbp), %rax
-	movq	%rax, %rdi
+	mov	rax, QWORD PTR [rbp-280]
+	mov	rdi, rax
 	call	print_complex
 	.loc 1 76 0
-	movl	$0, %eax
+	mov	eax, 0
 	.loc 1 77 0
-	movq	-24(%rbp), %rbx
-	xorq	%fs:40, %rbx
+	mov	rbx, QWORD PTR [rbp-24]
+	xor	rbx, QWORD PTR fs:40
 	je	.L11
 	call	__stack_chk_fail
 .L11:
-	addq	$296, %rsp
-	popq	%rbx
-	popq	%rbp
+	add	rsp, 296
+	pop	rbx
+	pop	rbp
 	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
@@ -274,53 +275,53 @@ print_polynomial:
 .LFB3:
 	.loc 1 82 0
 	.cfi_startproc
-	pushq	%rbp
+	push	rbp
 	.cfi_def_cfa_offset 16
 	.cfi_offset 6, -16
-	movq	%rsp, %rbp
+	mov	rbp, rsp
 	.cfi_def_cfa_register 6
-	subq	$48, %rsp
-	movq	%rdi, -24(%rbp)
-	movl	%esi, -28(%rbp)
+	sub	rsp, 48
+	mov	QWORD PTR [rbp-24], rdi
+	mov	DWORD PTR [rbp-28], esi
 .LBB4:
 	.loc 1 83 0
-	movl	$0, -4(%rbp)
+	mov	DWORD PTR [rbp-4], 0
 	jmp	.L14
 .L15:
 	.loc 1 84 0 discriminator 3
-	movl	-4(%rbp), %eax
-	cltq
-	leaq	0(,%rax,8), %rdx
-	movq	-24(%rbp), %rax
-	addq	%rdx, %rax
-	movq	(%rax), %rax
-	addq	$8, %rax
-	movsd	(%rax), %xmm0
-	movl	-4(%rbp), %eax
-	cltq
-	leaq	0(,%rax,8), %rdx
-	movq	-24(%rbp), %rax
-	addq	%rdx, %rax
-	movq	(%rax), %rax
-	movq	(%rax), %rax
-	movl	-4(%rbp), %edx
-	movl	%edx, %esi
-	movapd	%xmm0, %xmm1
-	movq	%rax, -40(%rbp)
-	movsd	-40(%rbp), %xmm0
-	movl	$.LC7, %edi
-	movl	$2, %eax
+	mov	eax, DWORD PTR [rbp-4]
+	cdqe
+	lea	rdx, [0+rax*8]
+	mov	rax, QWORD PTR [rbp-24]
+	add	rax, rdx
+	mov	rax, QWORD PTR [rax]
+	add	rax, 8
+	movsd	xmm0, QWORD PTR [rax]
+	mov	eax, DWORD PTR [rbp-4]
+	cdqe
+	lea	rdx, [0+rax*8]
+	mov	rax, QWORD PTR [rbp-24]
+	add	rax, rdx
+	mov	rax, QWORD PTR [rax]
+	mov	rax, QWORD PTR [rax]
+	mov	edx, DWORD PTR [rbp-4]
+	mov	esi, edx
+	movapd	xmm1, xmm0
+	mov	QWORD PTR [rbp-40], rax
+	movsd	xmm0, QWORD PTR [rbp-40]
+	mov	edi, OFFSET FLAT:.LC7
+	mov	eax, 2
 	call	printf
 	.loc 1 83 0 discriminator 3
-	addl	$1, -4(%rbp)
+	add	DWORD PTR [rbp-4], 1
 .L14:
 	.loc 1 83 0 is_stmt 0 discriminator 1
-	movl	-4(%rbp), %eax
-	cmpl	-28(%rbp), %eax
+	mov	eax, DWORD PTR [rbp-4]
+	cmp	eax, DWORD PTR [rbp-28]
 	jle	.L15
 .LBE4:
 	.loc 1 86 0 is_stmt 1
-	movl	$10, %edi
+	mov	edi, 10
 	call	putchar
 	.loc 1 87 0
 	nop
@@ -340,24 +341,24 @@ print_complex:
 .LFB4:
 	.loc 1 92 0
 	.cfi_startproc
-	pushq	%rbp
+	push	rbp
 	.cfi_def_cfa_offset 16
 	.cfi_offset 6, -16
-	movq	%rsp, %rbp
+	mov	rbp, rsp
 	.cfi_def_cfa_register 6
-	subq	$16, %rsp
-	movq	%rdi, -8(%rbp)
+	sub	rsp, 16
+	mov	QWORD PTR [rbp-8], rdi
 	.loc 1 93 0
-	movq	-8(%rbp), %rax
-	addq	$8, %rax
-	movsd	(%rax), %xmm0
-	movq	-8(%rbp), %rax
-	movq	(%rax), %rax
-	movapd	%xmm0, %xmm1
-	movq	%rax, -16(%rbp)
-	movsd	-16(%rbp), %xmm0
-	movl	$.LC8, %edi
-	movl	$2, %eax
+	mov	rax, QWORD PTR [rbp-8]
+	add	rax, 8
+	movsd	xmm0, QWORD PTR [rax]
+	mov	rax, QWORD PTR [rbp-8]
+	mov	rax, QWORD PTR [rax]
+	movapd	xmm1, xmm0
+	mov	QWORD PTR [rbp-16], rax
+	movsd	xmm0, QWORD PTR [rbp-16]
+	mov	edi, OFFSET FLAT:.LC8
+	mov	eax, 2
 	call	printf
 	.loc 1 94 0
 	nop
@@ -367,359 +368,115 @@ print_complex:
 	.cfi_endproc
 .LFE4:
 	.size	print_complex, .-print_complex
-	.globl	apply_function
-	.type	apply_function, @function
-apply_function:
+	.globl	calculate_derivative
+	.type	calculate_derivative, @function
+calculate_derivative:
 .LFB5:
-	.loc 1 99 0
+	.loc 1 121 0
 	.cfi_startproc
-	pushq	%rbp
+	push	rbp
 	.cfi_def_cfa_offset 16
 	.cfi_offset 6, -16
-	movq	%rsp, %rbp
+	mov	rbp, rsp
 	.cfi_def_cfa_register 6
-	subq	$64, %rsp
-	movq	%rdi, -40(%rbp)
-	movl	%esi, -44(%rbp)
-	movq	%rdx, -56(%rbp)
-	.loc 1 101 0
-	movl	$16, %edi
+	push	rbx
+	sub	rsp, 40
+	.cfi_offset 3, -24
+	mov	QWORD PTR [rbp-40], rdi
+	mov	DWORD PTR [rbp-44], esi
+	.loc 1 122 0
+	mov	eax, DWORD PTR [rbp-44]
+	cdqe
+	sal	rax, 3
+	mov	rdi, rax
 	call	malloc
-	movq	%rax, -16(%rbp)
-	.loc 1 102 0
-	movq	-16(%rbp), %rax
-	pxor	%xmm0, %xmm0
-	movsd	%xmm0, (%rax)
-	.loc 1 103 0
-	movq	-16(%rbp), %rax
-	addq	$8, %rax
-	pxor	%xmm0, %xmm0
-	movsd	%xmm0, (%rax)
+	mov	QWORD PTR [rbp-24], rax
 .LBB5:
-	.loc 1 104 0
-	movl	$0, -20(%rbp)
+	.loc 1 123 0
+	mov	DWORD PTR [rbp-28], 1
 	jmp	.L18
 .L19:
-.LBB6:
-	.loc 1 106 0 discriminator 3
-	movl	-20(%rbp), %edx
-	movq	-56(%rbp), %rax
-	movl	%edx, %esi
-	movq	%rax, %rdi
-	call	power_complex
-	movq	%rax, -8(%rbp)
-	.loc 1 107 0 discriminator 3
-	movl	-20(%rbp), %eax
-	cltq
-	leaq	0(,%rax,8), %rdx
-	movq	-40(%rbp), %rax
-	addq	%rdx, %rax
-	movq	(%rax), %rdx
-	movq	-8(%rbp), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	multiply_complex
-	movq	%rax, -8(%rbp)
-	.loc 1 109 0 discriminator 3
-	movq	-16(%rbp), %rax
-	movsd	(%rax), %xmm1
-	movq	-8(%rbp), %rax
-	movsd	(%rax), %xmm0
-	addsd	%xmm1, %xmm0
-	movq	-16(%rbp), %rax
-	movsd	%xmm0, (%rax)
-	.loc 1 110 0 discriminator 3
-	movq	-16(%rbp), %rax
-	addq	$8, %rax
-	movq	-16(%rbp), %rdx
-	addq	$8, %rdx
-	movsd	(%rdx), %xmm1
-	movq	-8(%rbp), %rdx
-	addq	$8, %rdx
-	movsd	(%rdx), %xmm0
-	addsd	%xmm1, %xmm0
-	movsd	%xmm0, (%rax)
-	.loc 1 112 0 discriminator 3
-	movq	-8(%rbp), %rax
-	movq	%rax, %rdi
-	call	free
-.LBE6:
-	.loc 1 104 0 discriminator 3
-	addl	$1, -20(%rbp)
+	.loc 1 124 0 discriminator 3
+	mov	eax, DWORD PTR [rbp-28]
+	cdqe
+	sal	rax, 3
+	lea	rdx, [rax-8]
+	mov	rax, QWORD PTR [rbp-24]
+	lea	rbx, [rdx+rax]
+	mov	edi, 16
+	call	malloc
+	mov	QWORD PTR [rbx], rax
+	.loc 1 125 0 discriminator 3
+	mov	eax, DWORD PTR [rbp-28]
+	cdqe
+	sal	rax, 3
+	lea	rdx, [rax-8]
+	mov	rax, QWORD PTR [rbp-24]
+	add	rax, rdx
+	mov	rax, QWORD PTR [rax]
+	pxor	xmm0, xmm0
+	cvtsi2sd	xmm0, DWORD PTR [rbp-28]
+	mov	edx, DWORD PTR [rbp-28]
+	movsx	rdx, edx
+	lea	rcx, [0+rdx*8]
+	mov	rdx, QWORD PTR [rbp-40]
+	add	rdx, rcx
+	mov	rdx, QWORD PTR [rdx]
+	movsd	xmm1, QWORD PTR [rdx]
+	mulsd	xmm0, xmm1
+	movsd	QWORD PTR [rax], xmm0
+	.loc 1 126 0 discriminator 3
+	mov	eax, DWORD PTR [rbp-28]
+	cdqe
+	sal	rax, 3
+	lea	rdx, [rax-8]
+	mov	rax, QWORD PTR [rbp-24]
+	add	rax, rdx
+	mov	rax, QWORD PTR [rax]
+	add	rax, 8
+	pxor	xmm0, xmm0
+	cvtsi2sd	xmm0, DWORD PTR [rbp-28]
+	mov	edx, DWORD PTR [rbp-28]
+	movsx	rdx, edx
+	lea	rcx, [0+rdx*8]
+	mov	rdx, QWORD PTR [rbp-40]
+	add	rdx, rcx
+	mov	rdx, QWORD PTR [rdx]
+	add	rdx, 8
+	movsd	xmm1, QWORD PTR [rdx]
+	mulsd	xmm0, xmm1
+	movsd	QWORD PTR [rax], xmm0
+	.loc 1 123 0 discriminator 3
+	add	DWORD PTR [rbp-28], 1
 .L18:
-	.loc 1 104 0 is_stmt 0 discriminator 1
-	movl	-20(%rbp), %eax
-	cmpl	-44(%rbp), %eax
+	.loc 1 123 0 is_stmt 0 discriminator 1
+	mov	eax, DWORD PTR [rbp-28]
+	cmp	eax, DWORD PTR [rbp-44]
 	jle	.L19
 .LBE5:
-	.loc 1 115 0 is_stmt 1
-	movq	-16(%rbp), %rax
-	.loc 1 116 0
-	leave
+	.loc 1 128 0 is_stmt 1
+	mov	rax, QWORD PTR [rbp-24]
+	.loc 1 129 0
+	add	rsp, 40
+	pop	rbx
+	pop	rbp
 	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE5:
-	.size	apply_function, .-apply_function
-	.globl	calculate_derivative
-	.type	calculate_derivative, @function
-calculate_derivative:
-.LFB6:
-	.loc 1 121 0
-	.cfi_startproc
-	pushq	%rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
-	movq	%rsp, %rbp
-	.cfi_def_cfa_register 6
-	pushq	%rbx
-	subq	$40, %rsp
-	.cfi_offset 3, -24
-	movq	%rdi, -40(%rbp)
-	movl	%esi, -44(%rbp)
-	.loc 1 122 0
-	movl	-44(%rbp), %eax
-	cltq
-	salq	$3, %rax
-	movq	%rax, %rdi
-	call	malloc
-	movq	%rax, -24(%rbp)
-.LBB7:
-	.loc 1 123 0
-	movl	$1, -28(%rbp)
-	jmp	.L22
-.L23:
-	.loc 1 124 0 discriminator 3
-	movl	-28(%rbp), %eax
-	cltq
-	salq	$3, %rax
-	leaq	-8(%rax), %rdx
-	movq	-24(%rbp), %rax
-	leaq	(%rdx,%rax), %rbx
-	movl	$16, %edi
-	call	malloc
-	movq	%rax, (%rbx)
-	.loc 1 125 0 discriminator 3
-	movl	-28(%rbp), %eax
-	cltq
-	salq	$3, %rax
-	leaq	-8(%rax), %rdx
-	movq	-24(%rbp), %rax
-	addq	%rdx, %rax
-	movq	(%rax), %rax
-	pxor	%xmm0, %xmm0
-	cvtsi2sd	-28(%rbp), %xmm0
-	movl	-28(%rbp), %edx
-	movslq	%edx, %rdx
-	leaq	0(,%rdx,8), %rcx
-	movq	-40(%rbp), %rdx
-	addq	%rcx, %rdx
-	movq	(%rdx), %rdx
-	movsd	(%rdx), %xmm1
-	mulsd	%xmm1, %xmm0
-	movsd	%xmm0, (%rax)
-	.loc 1 126 0 discriminator 3
-	movl	-28(%rbp), %eax
-	cltq
-	salq	$3, %rax
-	leaq	-8(%rax), %rdx
-	movq	-24(%rbp), %rax
-	addq	%rdx, %rax
-	movq	(%rax), %rax
-	addq	$8, %rax
-	pxor	%xmm0, %xmm0
-	cvtsi2sd	-28(%rbp), %xmm0
-	movl	-28(%rbp), %edx
-	movslq	%edx, %rdx
-	leaq	0(,%rdx,8), %rcx
-	movq	-40(%rbp), %rdx
-	addq	%rcx, %rdx
-	movq	(%rdx), %rdx
-	addq	$8, %rdx
-	movsd	(%rdx), %xmm1
-	mulsd	%xmm1, %xmm0
-	movsd	%xmm0, (%rax)
-	.loc 1 123 0 discriminator 3
-	addl	$1, -28(%rbp)
-.L22:
-	.loc 1 123 0 is_stmt 0 discriminator 1
-	movl	-28(%rbp), %eax
-	cmpl	-44(%rbp), %eax
-	jle	.L23
-.LBE7:
-	.loc 1 128 0 is_stmt 1
-	movq	-24(%rbp), %rax
-	.loc 1 129 0
-	addq	$40, %rsp
-	popq	%rbx
-	popq	%rbp
-	.cfi_def_cfa 7, 8
-	ret
-	.cfi_endproc
-.LFE6:
 	.size	calculate_derivative, .-calculate_derivative
-	.globl	divide_complex
-	.type	divide_complex, @function
-divide_complex:
-.LFB7:
-	.loc 1 134 0
-	.cfi_startproc
-	pushq	%rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
-	movq	%rsp, %rbp
-	.cfi_def_cfa_register 6
-	subq	$48, %rsp
-	movq	%rdi, -40(%rbp)
-	movq	%rsi, -48(%rbp)
-	.loc 1 135 0
-	movl	$16, %edi
-	call	malloc
-	movq	%rax, -24(%rbp)
-	.loc 1 136 0
-	movq	-48(%rbp), %rax
-	movq	%rax, %rdi
-	call	invert_complex
-	movq	%rax, -16(%rbp)
-	.loc 1 138 0
-	movq	-16(%rbp), %rdx
-	movq	-40(%rbp), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	multiply_complex
-	movq	%rax, -24(%rbp)
-	.loc 1 139 0
-	movq	-48(%rbp), %rax
-	movsd	(%rax), %xmm1
-	movq	-48(%rbp), %rax
-	movsd	(%rax), %xmm0
-	mulsd	%xmm0, %xmm1
-	movq	-48(%rbp), %rax
-	addq	$8, %rax
-	movsd	(%rax), %xmm2
-	movq	-48(%rbp), %rax
-	addq	$8, %rax
-	movsd	(%rax), %xmm0
-	mulsd	%xmm2, %xmm0
-	addsd	%xmm1, %xmm0
-	movsd	%xmm0, -8(%rbp)
-	.loc 1 142 0
-	movq	-24(%rbp), %rax
-	movsd	(%rax), %xmm0
-	divsd	-8(%rbp), %xmm0
-	movq	-24(%rbp), %rax
-	movsd	%xmm0, (%rax)
-	.loc 1 143 0
-	movq	-24(%rbp), %rax
-	addq	$8, %rax
-	movq	-24(%rbp), %rdx
-	addq	$8, %rdx
-	movsd	(%rdx), %xmm0
-	divsd	-8(%rbp), %xmm0
-	movsd	%xmm0, (%rax)
-	.loc 1 146 0
-	movq	-16(%rbp), %rax
-	movq	%rax, %rdi
-	call	free
-	.loc 1 147 0
-	movq	-24(%rbp), %rax
-	.loc 1 148 0
-	leave
-	.cfi_def_cfa 7, 8
-	ret
-	.cfi_endproc
-.LFE7:
-	.size	divide_complex, .-divide_complex
-	.globl	newton_step
-	.type	newton_step, @function
-newton_step:
-.LFB8:
-	.loc 1 153 0
-	.cfi_startproc
-	pushq	%rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
-	movq	%rsp, %rbp
-	.cfi_def_cfa_register 6
-	subq	$80, %rsp
-	movq	%rdi, -56(%rbp)
-	movl	%esi, -60(%rbp)
-	movq	%rdx, -72(%rbp)
-	.loc 1 154 0
-	movl	$16, %edi
-	call	malloc
-	movq	%rax, -40(%rbp)
-	.loc 1 157 0
-	movl	-60(%rbp), %edx
-	movq	-56(%rbp), %rax
-	movl	%edx, %esi
-	movq	%rax, %rdi
-	call	calculate_derivative
-	movq	%rax, -32(%rbp)
-	.loc 1 159 0
-	movq	-72(%rbp), %rdx
-	movl	-60(%rbp), %ecx
-	movq	-56(%rbp), %rax
-	movl	%ecx, %esi
-	movq	%rax, %rdi
-	call	apply_function
-	movq	%rax, -24(%rbp)
-	.loc 1 160 0
-	movl	-60(%rbp), %eax
-	leal	-1(%rax), %ecx
-	movq	-72(%rbp), %rdx
-	movq	-32(%rbp), %rax
-	movl	%ecx, %esi
-	movq	%rax, %rdi
-	call	apply_function
-	movq	%rax, -16(%rbp)
-	.loc 1 162 0
-	movq	-16(%rbp), %rdx
-	movq	-24(%rbp), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	divide_complex
-	movq	%rax, -8(%rbp)
-	.loc 1 165 0
-	movq	-24(%rbp), %rax
-	movq	%rax, %rdi
-	call	free
-	.loc 1 166 0
-	movq	-16(%rbp), %rax
-	movq	%rax, %rdi
-	call	free
-	.loc 1 169 0
-	movq	-8(%rbp), %rdx
-	movq	-72(%rbp), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	subtract_complex
-	movq	%rax, -40(%rbp)
-	.loc 1 170 0
-	movq	-8(%rbp), %rax
-	movq	%rax, %rdi
-	call	free
-	.loc 1 172 0
-	movq	-40(%rbp), %rax
-	.loc 1 173 0
-	leave
-	.cfi_def_cfa 7, 8
-	ret
-	.cfi_endproc
-.LFE8:
-	.size	newton_step, .-newton_step
 .Letext0:
 	.section	.debug_info,"",@progbits
 .Ldebug_info0:
-	.long	0x43c
+	.long	0x2a4
 	.value	0x4
 	.long	.Ldebug_abbrev0
 	.byte	0x8
 	.uleb128 0x1
-	.long	.LASF47
+	.long	.LASF33
 	.byte	0xc
-	.long	.LASF48
-	.long	.LASF49
+	.long	.LASF34
+	.long	.LASF35
 	.quad	.Ltext0
 	.quad	.Letext0-.Ltext0
 	.long	.Ldebug_line0
@@ -780,7 +537,7 @@ newton_step:
 	.byte	0x4
 	.long	.LASF12
 	.uleb128 0x4
-	.long	.LASF29
+	.long	.LASF36
 	.byte	0x1
 	.byte	0x17
 	.long	0x57
@@ -971,20 +728,19 @@ newton_step:
 	.byte	0x91
 	.sleb128 -24
 	.byte	0
-	.uleb128 0x4
-	.long	.LASF30
+	.uleb128 0xd
+	.long	.LASF29
 	.byte	0x1
-	.byte	0x63
-	.long	0x1a3
+	.byte	0x79
+	.long	0x19d
 	.quad	.LFB5
 	.quad	.LFE5-.LFB5
 	.uleb128 0x1
 	.byte	0x9c
-	.long	0x2da
 	.uleb128 0xc
-	.long	.LASF16
+	.long	.LASF30
 	.byte	0x1
-	.byte	0x63
+	.byte	0x79
 	.long	0x19d
 	.uleb128 0x2
 	.byte	0x91
@@ -992,80 +748,13 @@ newton_step:
 	.uleb128 0xc
 	.long	.LASF14
 	.byte	0x1
-	.byte	0x63
+	.byte	0x79
 	.long	0x57
 	.uleb128 0x2
 	.byte	0x91
 	.sleb128 -60
-	.uleb128 0xc
+	.uleb128 0x5
 	.long	.LASF31
-	.byte	0x1
-	.byte	0x63
-	.long	0x1a3
-	.uleb128 0x3
-	.byte	0x91
-	.sleb128 -72
-	.uleb128 0x5
-	.long	.LASF32
-	.byte	0x1
-	.byte	0x65
-	.long	0x1a3
-	.uleb128 0x2
-	.byte	0x91
-	.sleb128 -32
-	.uleb128 0x7
-	.quad	.LBB5
-	.quad	.LBE5-.LBB5
-	.uleb128 0x5
-	.long	.LASF33
-	.byte	0x1
-	.byte	0x68
-	.long	0x57
-	.uleb128 0x2
-	.byte	0x91
-	.sleb128 -36
-	.uleb128 0x7
-	.quad	.LBB6
-	.quad	.LBE6-.LBB6
-	.uleb128 0x5
-	.long	.LASF34
-	.byte	0x1
-	.byte	0x6a
-	.long	0x1a3
-	.uleb128 0x2
-	.byte	0x91
-	.sleb128 -24
-	.byte	0
-	.byte	0
-	.byte	0
-	.uleb128 0x4
-	.long	.LASF35
-	.byte	0x1
-	.byte	0x79
-	.long	0x19d
-	.quad	.LFB6
-	.quad	.LFE6-.LFB6
-	.uleb128 0x1
-	.byte	0x9c
-	.long	0x346
-	.uleb128 0xc
-	.long	.LASF36
-	.byte	0x1
-	.byte	0x79
-	.long	0x19d
-	.uleb128 0x2
-	.byte	0x91
-	.sleb128 -56
-	.uleb128 0xc
-	.long	.LASF14
-	.byte	0x1
-	.byte	0x79
-	.long	0x57
-	.uleb128 0x2
-	.byte	0x91
-	.sleb128 -60
-	.uleb128 0x5
-	.long	.LASF37
 	.byte	0x1
 	.byte	0x7a
 	.long	0x19d
@@ -1073,10 +762,10 @@ newton_step:
 	.byte	0x91
 	.sleb128 -40
 	.uleb128 0x7
-	.quad	.LBB7
-	.quad	.LBE7-.LBB7
+	.quad	.LBB5
+	.quad	.LBE5-.LBB5
 	.uleb128 0x5
-	.long	.LASF33
+	.long	.LASF32
 	.byte	0x1
 	.byte	0x7b
 	.long	0x57
@@ -1084,131 +773,6 @@ newton_step:
 	.byte	0x91
 	.sleb128 -44
 	.byte	0
-	.byte	0
-	.uleb128 0x4
-	.long	.LASF38
-	.byte	0x1
-	.byte	0x86
-	.long	0x1a3
-	.quad	.LFB7
-	.quad	.LFE7-.LFB7
-	.uleb128 0x1
-	.byte	0x9c
-	.long	0x3ae
-	.uleb128 0xc
-	.long	.LASF39
-	.byte	0x1
-	.byte	0x86
-	.long	0x1a3
-	.uleb128 0x2
-	.byte	0x91
-	.sleb128 -56
-	.uleb128 0xc
-	.long	.LASF40
-	.byte	0x1
-	.byte	0x86
-	.long	0x1a3
-	.uleb128 0x2
-	.byte	0x91
-	.sleb128 -64
-	.uleb128 0x5
-	.long	.LASF32
-	.byte	0x1
-	.byte	0x87
-	.long	0x1a3
-	.uleb128 0x2
-	.byte	0x91
-	.sleb128 -40
-	.uleb128 0x5
-	.long	.LASF41
-	.byte	0x1
-	.byte	0x88
-	.long	0x1a3
-	.uleb128 0x2
-	.byte	0x91
-	.sleb128 -32
-	.uleb128 0x5
-	.long	.LASF42
-	.byte	0x1
-	.byte	0x8b
-	.long	0x88
-	.uleb128 0x2
-	.byte	0x91
-	.sleb128 -24
-	.byte	0
-	.uleb128 0xd
-	.long	.LASF43
-	.byte	0x1
-	.byte	0x99
-	.long	0x1a3
-	.quad	.LFB8
-	.quad	.LFE8-.LFB8
-	.uleb128 0x1
-	.byte	0x9c
-	.uleb128 0xc
-	.long	.LASF16
-	.byte	0x1
-	.byte	0x99
-	.long	0x19d
-	.uleb128 0x3
-	.byte	0x91
-	.sleb128 -72
-	.uleb128 0xc
-	.long	.LASF14
-	.byte	0x1
-	.byte	0x99
-	.long	0x57
-	.uleb128 0x3
-	.byte	0x91
-	.sleb128 -76
-	.uleb128 0xc
-	.long	.LASF21
-	.byte	0x1
-	.byte	0x99
-	.long	0x1a3
-	.uleb128 0x3
-	.byte	0x91
-	.sleb128 -88
-	.uleb128 0x5
-	.long	.LASF32
-	.byte	0x1
-	.byte	0x9a
-	.long	0x1a3
-	.uleb128 0x2
-	.byte	0x91
-	.sleb128 -56
-	.uleb128 0x5
-	.long	.LASF37
-	.byte	0x1
-	.byte	0x9d
-	.long	0x19d
-	.uleb128 0x2
-	.byte	0x91
-	.sleb128 -48
-	.uleb128 0x5
-	.long	.LASF44
-	.byte	0x1
-	.byte	0x9f
-	.long	0x1a3
-	.uleb128 0x2
-	.byte	0x91
-	.sleb128 -40
-	.uleb128 0x5
-	.long	.LASF45
-	.byte	0x1
-	.byte	0xa0
-	.long	0x1a3
-	.uleb128 0x2
-	.byte	0x91
-	.sleb128 -32
-	.uleb128 0x5
-	.long	.LASF46
-	.byte	0x1
-	.byte	0xa2
-	.long	0x1a3
-	.uleb128 0x2
-	.byte	0x91
-	.sleb128 -24
 	.byte	0
 	.byte	0
 	.section	.debug_abbrev,"",@progbits
@@ -1424,38 +988,22 @@ newton_step:
 	.section	.debug_line,"",@progbits
 .Ldebug_line0:
 	.section	.debug_str,"MS",@progbits,1
-.LASF43:
-	.string	"newton_step"
 .LASF14:
 	.string	"order"
 .LASF18:
 	.string	"runs"
-.LASF39:
-	.string	"complex1"
-.LASF40:
-	.string	"complex2"
-.LASF42:
-	.string	"norma"
-.LASF11:
-	.string	"float"
-.LASF31:
-	.string	"value"
-.LASF49:
+.LASF35:
 	.string	"/users/studs/bsc/2016/rotemmia/Archi/Archi-2"
-.LASF34:
-	.string	"step"
 .LASF17:
 	.string	"acceptString"
 .LASF27:
 	.string	"print_complex"
 .LASF22:
 	.string	"distance"
-.LASF41:
-	.string	"inverted_denominator"
+.LASF11:
+	.string	"float"
 .LASF1:
 	.string	"unsigned char"
-.LASF38:
-	.string	"divide_complex"
 .LASF15:
 	.string	"initial"
 .LASF0:
@@ -1464,15 +1012,11 @@ newton_step:
 	.string	"short unsigned int"
 .LASF28:
 	.string	"complex"
-.LASF37:
+.LASF31:
 	.string	"derivative"
 .LASF12:
 	.string	"double"
-.LASF47:
-	.string	"GNU C11 5.4.0 20160609 -mtune=generic -march=x86-64 -g -fno-omit-frame-pointer -fstack-protector-strong"
-.LASF26:
-	.string	"print_polynomial"
-.LASF29:
+.LASF36:
 	.string	"main"
 .LASF21:
 	.string	"current_value"
@@ -1480,32 +1024,28 @@ newton_step:
 	.string	"unsigned int"
 .LASF13:
 	.string	"epsilon"
-.LASF46:
-	.string	"divide_result"
 .LASF10:
 	.string	"long long unsigned int"
-.LASF32:
-	.string	"result"
-.LASF45:
-	.string	"derivative_value"
+.LASF26:
+	.string	"print_polynomial"
 .LASF25:
 	.string	"printIndex"
 .LASF23:
 	.string	"initIndex"
 .LASF7:
 	.string	"sizetype"
-.LASF30:
-	.string	"apply_function"
 .LASF9:
 	.string	"long long int"
-.LASF48:
+.LASF34:
 	.string	"main.c"
 .LASF8:
 	.string	"char"
-.LASF36:
+.LASF30:
 	.string	"coefficient"
-.LASF33:
+.LASF32:
 	.string	"index"
+.LASF33:
+	.string	"GNU C11 5.4.0 20160609 -masm=intel -mtune=generic -march=x86-64 -g -fno-omit-frame-pointer -fstack-protector-strong"
 .LASF5:
 	.string	"short int"
 .LASF20:
@@ -1516,11 +1056,9 @@ newton_step:
 	.string	"long int"
 .LASF24:
 	.string	"coefficientindex"
-.LASF44:
-	.string	"function_value"
 .LASF4:
 	.string	"signed char"
-.LASF35:
+.LASF29:
 	.string	"calculate_derivative"
 .LASF19:
 	.string	"last"
