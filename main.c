@@ -176,6 +176,8 @@ double * divide_complex(double * complex1, double * complex2) {
     double * result = (double *) malloc(2 * sizeof(double));
     double * inverted_denominator = invert_complex(complex2);
 
+    print_complex(inverted_denominator);
+
     result = multiply_complex(complex1, inverted_denominator);
     double norma = pow(complex2[0], 2) + powf(complex2[1], 2);
     // (a+bi) / (c+di) = ((a+bi)*(c-di))/((c+di)(c-di)) = ((a+bi)*(c-di))/(c^2 +d^2)
