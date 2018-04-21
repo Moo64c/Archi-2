@@ -12,11 +12,11 @@ extern double * add_complex(double *, double *);
 extern double * subtract_complex(double *, double *);
 extern double * multiply_complex(double *, double *);
 extern double * power_complex(double *, int);
+extern double * apply_function(double **, int, double *);
 
 void print_polynomial(double ** coefficients, int order);
 void print_complex(double * complex);
 double * divide_complex(double * complex1, double * complex2);
-double * apply_function(double ** coefficient, int order, double * value);
 double * newton_step(double ** coefficient, int order, double * current_value);
 double ** calculate_derivative(double ** coefficient, int order);
 
@@ -95,7 +95,7 @@ void print_complex(double * complex) {
 
 /**
  * Gets the result of applying a polynomial function with a specific value.
- */
+ *
 double * apply_function(double ** coefficients, int order, double * value) {
     //
     double * result = (double *) malloc(2 * sizeof(double));
@@ -113,7 +113,7 @@ double * apply_function(double ** coefficients, int order, double * value) {
     }
 
     return result;
-}
+} */
 
 /**
  * Gets a derivative of a coefficient representation of a polynom.

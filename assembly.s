@@ -7,7 +7,79 @@ section .data
 section .text
   global invert_complex, add_complex, subtract_complex, multiply_complex
   extern malloc, free, scanf, printf
-  global power_complex
+  global power_complex, apply_function
+
+; ==== Apply function ===
+apply_function:
+	push rbp
+	mov	rbp, rsp
+	sub rsp, 64
+
+	mov	[rbp - 40], rdi
+	mov	[rbp - 44], esi
+	mov	[rbp - 56], rdx
+	mov	edi, 16
+	call	malloc
+	mov	[rbp - 16], rax
+
+	mov	rax, [rbp - 16]
+	pxor	xmm0, xmm0
+	movsd	[rax], xmm0
+	mov	rax, [rbp - 16]
+	add	rax, 8
+	pxor	xmm0, xmm0
+	movsd	[rax], xmm0
+	mov	word[rbp - 20], 0
+	jmp	.L18
+.L19:
+	mov	edx, [rbp - 20]
+	mov	rax, [rbp - 56]
+	mov	esi, edx
+	mov	rdi, rax
+	call power_complex
+	mov	[rbp - 8], rax
+	mov	eax, [rbp - 20]
+	cdqe
+	lea	rdx, [rax * 8]
+	mov	rax, [rbp - 40]
+	add	rax, rdx
+	mov	rdx, [rax]
+	mov	rax, [rbp - 8]
+	mov	rsi, rdx
+	mov	rdi, rax
+	call multiply_complex
+	mov	[rbp - 8], rax
+
+	mov	rax, [rbp - 16]
+	movsd	xmm1, [rax]
+	mov	rax, [rbp - 8]
+	movsd	xmm0, [rax]
+	addsd	xmm0, xmm1
+	mov	rax, [rbp - 16]
+	movsd	[rax], xmm0
+	mov	rax, [rbp - 16]
+	add	rax, 8
+	mov	rdx, [rbp - 16]
+	add rdx, 8
+	movsd	xmm1, [rdx]
+	mov	rdx, [rbp - 8]
+	add	rdx, 8
+	movsd	xmm0, [rdx]
+	addsd	xmm0, xmm1
+	movsd	[rax], xmm0
+	mov	rdi, [rbp - 8]
+	call free
+
+	add	word[rbp - 20], 1
+.L18:
+	mov	eax, [rbp - 20]
+	cmp	eax, [rbp - 44]
+	jle	.L19
+	mov	rax, [rbp - 16]
+	leave
+	ret
+
+
 
 ; ==== Power complex ====
 
