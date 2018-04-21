@@ -8,15 +8,14 @@
 #include <math.h>
 
 extern double * invert_complex(double *);
+extern double * add_complex(double *, double *);
 
 void print_polynomial(double ** coefficients, int order);
 void print_complex(double * complex);
 double * power_complex(double * complex, int power);
-double * add_complex(double * complex1, double * complex2);
 double * subtract_complex(double * complex1, double * complex2);
 double * multiply_complex(double * complex1, double * complex2);
 double * divide_complex(double * complex1, double * complex2);
-//double * invert_complex(double * complex);
 double * apply_function(double ** coefficient, int order, double * value);
 double * newton_step(double ** coefficient, int order, double * current_value);
 double ** calculate_derivative(double ** coefficient, int order);
@@ -133,23 +132,26 @@ double * power_complex(double * complex, int power) {
   // Like Kanye
     double * result = (double *) malloc(2 * sizeof(double));
 
-    if (power == 0) {
+    if (power <= 0) {
       // Special case.
         result[0] = 1.0;
         result[1] = 0.0;
         return result;
     }
 
-    // Polar notation of the complex number.
-    double radius = sqrt(complex[0] * complex[0] + complex[1] * complex[1]);
-    double thetha = atan2(complex[1], complex[0]);
-    // Apply.
-    radius = pow(radius, (double) power);
-    thetha = thetha * power;
+    if (power == 1) {
+      result[0] = complex[0];
+      result[1] = complex[1];
+      return result;
+    }
 
-    // Convert back to standard notation.
-    result[0] = radius * (cos(thetha));
-    result[1] = radius * (sin(thetha));
+    // Else - power > 1... recursive call.
+    free(result);
+    double * recursive_result = power_complex(complex, power - 1);
+    result = multiply_complex(recursive_result, complex);
+
+    // Clean up.
+    free(recursive_result);
     return result;
 }
 
