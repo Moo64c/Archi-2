@@ -128,7 +128,7 @@ main:
 	mov	rsi, rcx
 	mov	rdi, rax
 	mov	eax, 0
-	call	scanf
+	call scanf
 	mov	dword  [rbp-28], 0
 	lea	rax, [rbp-128]
 	mov	qword  [rbp-40], rax

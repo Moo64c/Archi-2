@@ -1,5 +1,5 @@
 // Global debug variable.
-#define debug 2
+#define debug 0
 #define RUN_LIMIT 100
 
 #include <stdio.h>
