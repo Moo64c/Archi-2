@@ -5,9 +5,9 @@ section .data
     dq 1.0
 
 section .text
-  global invert_complex, add_complex, subtract_complex
+  global invert_complex, add_complex, subtract_complex, multiply_complex
 ;  global add_complex, subtract_complex
-  extern malloc, free, scanf, printf, multiply_complex
+  extern malloc, free, scanf, printf
 
 
 ; ==== Power complex ====
@@ -176,7 +176,6 @@ sub rsp, 32
 
   ; ==== Subtract complex ====
   subtract_complex:
-
   ; Generic start
   push rbp
   mov rbp, rsp
@@ -225,6 +224,79 @@ sub rsp, 32
   ; Save the number to the newely allocated area.
   movsd	[rax], xmm0
 
+  ; Return address of new number.
+  mov	rax, [rbp-8]
+
+  ; Reset rbp & rsp and return.
+  leave
+  ret
+
+; ======= Multiply complex =======
+  multiply_complex:
+  ; Generic start
+  push rbp
+  mov rbp, rsp
+
+  ; Increase stack size.
+  sub rsp, 32
+
+  ; Save rdi and rsi on stack and allocate memory for the new complex number.
+  mov	[rbp-24], rdi
+  mov	[rbp-32], rsi
+  mov	rdi, 16
+  call	malloc
+
+  ; Save allocated memory address on stack.
+  mov	[rbp-8], rax
+
+  ; Take first parameter from rdi (saved on stack).
+  mov	rax, [rbp-24]
+  movsd	xmm1, [rax]
+
+  ; Take first parameter from rsi (saved on stack).
+  mov	rax, [rbp-32]
+  movsd	xmm0, [rax]
+
+  ; Multiply the real part.
+  mulsd	xmm0, xmm1
+
+  ; Get the imaginery first number and save to xmm2
+  mov	rax,[rbp-24]
+  add	rax, 8
+  movsd	xmm2, [rax]
+  ; Get the imaginery second number and save to xmm1
+  mov	rax, [rbp-32]
+  add	rax, 8
+  movsd	xmm1, [rax]
+  ; Multiply the imaginery part
+  mulsd	xmm1, xmm2
+  ;Subtract the imaginery from real and save in new area allocated.
+  subsd	xmm0, xmm1
+  mov	rax, [rbp-8]
+  movsd	[rax], xmm0
+  mov	rax, [rbp-8]
+  ; Rdx will get the imaginery part of the final number.
+  lea rdx, [rax+8]
+  ; Get the first's real num to xmm1
+  mov	rax, [rbp-24]
+  movsd	xmm1, [rax]
+  ; Get the second's imaginery num to xmm0
+  mov	rax, [rbp-32]
+  add	rax, 8
+  movsd	xmm0, [rax]
+  ; Multiply both.
+  mulsd	xmm1, xmm0
+  ; Get the first's imaginery num to xmm2
+  mov	rax, [rbp-24]
+  add	rax, 8
+  movsd	xmm2, [rax]
+  ; Get the second's real num to xmm0
+  mov	rax, [rbp-32]
+  movsd	xmm0, [rax]
+  ; Multiply and add
+  mulsd	xmm0, xmm2
+  addsd	xmm0, xmm1
+  movsd	[rdx], xmm0,
   ; Return address of new number.
   mov	rax, [rbp-8]
 
