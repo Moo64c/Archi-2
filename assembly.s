@@ -13,7 +13,7 @@ invert_complex:
   push r11
 
   ; Get pointer.
-  mov rax, [rdi+24]
+  mov rax, [rbp+8]
   ; Get first value (real number)
   mov r10, [rax]
   ; Get second value (imaginery)
@@ -28,8 +28,8 @@ invert_complex:
   mov [rax+8], r11
 
   ; Restore registers.
-  push r11
-  push r10
+  pop r11
+  pop r10
 
   ; Return.
   pop rbp
