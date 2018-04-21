@@ -6,17 +6,19 @@ section .data
 
 section .text
   global invert_complex
-;  global add_complex, subtract_complex
   extern malloc, free, scanf, printf, multiply_complex
 
 
 ; ==== Power complex ====
 power_complex:
+; Standard start.
 	push   rbp
 	mov	   rbp, rsp
+  ; Allocate some room on the stack.
 	sub	   rsp, 32
 	mov  	 [rbp - 24], rdi
 	mov	   [rbp - 28], rsi
+  ; Allocate room for a result.
 	mov    rdi, 16
 	call	 malloc
   mov    [rbp - 16], rax
@@ -27,50 +29,66 @@ power_complex:
 
   ; Power of zero. Assign 1 and 0.
 	mov    rax, [rbp - 16]
+  ; Save 1 in the double real value.
 	movsd	 xmm0, [_1]
 	movsd  [rax], xmm0
-	mov	rax, [rbp - 16]
-	add	rax, 8
-	pxor	xmm0, xmm0
-	movsd	[rax], xmm0
-	mov	rax, [rbp - 16]
+	mov	   rax, [rbp - 16]
+	add	   rax, 8
+  ; Save 0 in the imaginery value.
+	pxor	 xmm0, xmm0
+	movsd	 [rax], xmm0
+	mov	   rax, [rbp - 16]
 	jmp	.power_complex_end
 .power_complex_not_zero_power:
   ; power == 1 ?
-	cmp	qword[rbp - 28], 1
-	jne	.power_complex_one_power
-	mov	rax, [rbp - 24]
-	movsd	xmm0, [rax]
-	mov	rax, [rbp - 16]
-	movsd	[rax], xmm0
-	mov	rax, [rbp - 16]
-	mov	rax, [rbp - 24]
-	movsd	xmm0, [rax + 8]
-	movsd	[rdx], xmm0
-	mov	rax, [rbp - 16]
-	jmp	.power_complex_end
-.power_complex_one_power:
-	mov	rax, [rbp - 16]
-	mov	rdi, rax
-	call	free
-	mov	rax, [rbp - 28]
-	lea	rdx, [rax - 1]
-	mov	rax, [rbp - 24]
-	mov	rsi, rdx
-	mov	rdi, rax
-	call	power_complex
-	mov	[rbp - 8], rax
-	mov	rdx, [rbp - 24]
-	mov	rax, [rbp - 8]
-	mov	rsi, rdx
-	mov	rdi, rax
-	call	multiply_complex
-	mov	[rbp - 16], rax
-	mov	rax, [rbp - 8]
-	mov	rdi, rax
-	call	free
-	mov	rax, [rbp - 16]
+	cmp	   qword[rbp - 28], 1
+	jne	   .power_complex_recursively
+  ; Power == 1.
+  ; Load the values into the local result holder and return.
+	mov	   rax, [rbp - 24]
+	movsd	 xmm0, [rax]
+	mov	   rax, [rbp - 16]
+	movsd	 [rax], xmm0
+	mov	   rax, [rbp - 16]
+	mov	   rax, [rbp - 24]
+	movsd	 xmm0, [rax + 8]
+	movsd	 [rdx], xmm0
+	mov	   rax, [rbp - 16]
+	jmp	   .power_complex_end
+.power_complex_recursively:
+  ; Recursive call for results.
+  ; Free temporary result holder.
+	mov	   rax, [rbp - 16]
+	mov	   rdi, rax
+	call	 free
+
+
+  ; Call power_complex again with power - 1 before multiplying.
+	mov	   rax, [rbp - 28]
+	lea	   rdx, [rax - 1]
+	mov	   rax, [rbp - 24]
+	mov	   rsi, rdx
+	mov	   rdi, rax
+	call	 power_complex
+
+  ; Multiply the values (should happen [rbp-28] times).
+	mov	   [rbp - 8], rax
+	mov	   rdx, [rbp - 24]
+	mov	   rax, [rbp - 8]
+	mov	   rsi, rdx
+	mov	   rdi, rax
+	call	 multiply_complex
+
+  ; Free unused result pointers.
+	mov	   [rbp - 16], rax
+	mov	   rax, [rbp - 8]
+	mov	   rdi, rax
+	call	 free
+  
+  ; Return result.
+	mov	   rax, [rbp - 16]
 .power_complex_end:
+; End function.
 	leave
 	ret
 
