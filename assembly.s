@@ -5,8 +5,8 @@ section .data
     dq 1.0
 
 section .text
-  global invert_complex, add_complex, subtract_complex, multiply_complex, divide_complex
-  extern malloc, free, scanf, printf
+  global invert_complex, add_complex, subtract_complex, multiply_complex, divide_complex, newton_step
+  extern malloc, free, scanf, printf, calculate_derivative
   global power_complex, apply_function
 
 ; ==== Apply function ===
@@ -471,3 +471,76 @@ sub rsp, 32
   ; Reset rbp & rsp and return.
   leave
   ret
+
+  newton_step:
+  ; Generic start
+  push rbp
+  mov rbp, rsp
+
+  ; Increase stack size.
+  sub rsp, 80
+
+  ; Saves: rdi -coefficients, esi -order, rdx- current_value
+  ; and allocate memory for the new complex number(result).
+  	mov	[rbp-56], rdi
+  	mov	[rbp-60], esi
+  	mov	[rbp-72], rdx
+  	mov	edi, 16
+  	call	malloc
+  	mov	[rbp-40], rax
+
+  	mov	edx, [rbp-60]                  ; order
+  	mov	rax, [rbp-56]                  ; coefficients
+  	mov	esi, edx
+  	mov	rdi, rax
+  	call	calculate_derivative
+  	mov	[rbp-32], rax                  ; derivative
+
+  	mov	rdx, [rbp-72]                  ; current_value
+  	mov	ecx, [rbp-60]                  ; order
+  	mov	rax, [rbp-56]                  ; coefficients
+  	mov	esi, ecx
+  	mov	rdi, rax
+  	call	apply_function
+  	mov	[rbp-24], rax                  ; function value
+
+  	mov	eax, [rbp-60]                  ; order
+  	lea	ecx, [eax-1]                   ; order -1
+  	mov	rdx, [rbp-72]                  ; current_value
+  	mov	rax, [rbp-32]                  ; derivative
+  	mov	esi, ecx
+  	mov	rdi, rax
+  	call	apply_function
+  	mov	[rbp-16], rax                  ; derivative_value
+
+  	mov	rdx, [rbp-16]                  ; derivative_value
+  	mov	rax, [rbp-24]                  ; function_value
+  	mov	rsi, rdx
+  	mov	rdi, rax
+  	call	divide_complex
+  	mov	[rbp-8], rax                   ; divide_result
+
+  	mov	rax, [rbp-24]
+  	mov	rdi, rax
+  	call	free
+  	mov	rax, [rbp-16]
+  	mov	rdi, rax
+  	call	free
+
+  	mov	rdx, [rbp-8]                   ; divide_result
+  	mov	rax, [rbp-72]                  ; current_value
+  	mov	rsi, rdx
+  	mov	rdi, rax
+  	call	subtract_complex
+  	mov	[rbp-40], rax                  ; result
+
+  	mov	rax, [rbp-8]
+  	mov	rdi, rax
+  	call	free
+
+    ; Return address of result.
+    mov	rax, [rbp-40]
+
+    ; Reset rbp & rsp and return.
+    leave
+    ret
