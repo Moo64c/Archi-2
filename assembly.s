@@ -303,3 +303,76 @@ sub rsp, 32
   ; Reset rbp & rsp and return.
   leave
   ret
+
+
+; ===== Divide complex ======
+divide_complex:
+; Generic start
+push rbp
+mov rbp, rsp
+
+; Increase stack size.
+sub rsp, 64
+
+; Save rdi and rsi on stack and allocate memory for the new complex number.
+mov	[rbp-40], rdi
+mov	[rbp-48], rsi
+mov	rdi, 16
+call	malloc
+
+	movq	%rax, -24(%rbp)
+	.loc 1 169 0
+	movq	-48(%rbp), %rax
+	movq	%rax, %rdi
+	call	invert_complex
+	movq	%rax, -16(%rbp)
+	.loc 1 171 0
+	movq	-16(%rbp), %rdx
+	movq	-40(%rbp), %rax
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	multiply_complex
+	movq	%rax, -24(%rbp)
+	.loc 1 172 0
+	movq	-48(%rbp), %rax
+	movq	(%rax), %rax
+	movsd	.LC9(%rip), %xmm0
+	movapd	%xmm0, %xmm1
+	movq	%rax, -56(%rbp)
+	movsd	-56(%rbp), %xmm0
+	call	pow
+	movsd	%xmm0, -56(%rbp)
+	movq	-48(%rbp), %rax
+	addq	$8, %rax
+	movsd	(%rax), %xmm0
+	cvtsd2ss	%xmm0, %xmm0
+	movss	.LC10(%rip), %xmm1
+	call	powf
+	cvtss2sd	%xmm0, %xmm0
+	addsd	-56(%rbp), %xmm0
+	movsd	%xmm0, -8(%rbp)
+	.loc 1 175 0
+	movq	-24(%rbp), %rax
+	movsd	(%rax), %xmm0
+	divsd	-8(%rbp), %xmm0
+	movq	-24(%rbp), %rax
+	movsd	%xmm0, (%rax)
+	.loc 1 176 0
+	movq	-24(%rbp), %rax
+	addq	$8, %rax
+	movq	-24(%rbp), %rdx
+	addq	$8, %rdx
+	movsd	(%rdx), %xmm0
+	divsd	-8(%rbp), %xmm0
+	movsd	%xmm0, (%rax)
+	.loc 1 179 0
+	movq	-16(%rbp), %rax
+	movq	%rax, %rdi
+	call	free
+
+  ; Return address of new number.
+  mov	rax, [rbp-24]
+
+  ; Reset rbp & rsp and return.
+  leave
+  ret

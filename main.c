@@ -17,8 +17,7 @@ extern double * multiply_complex(double *, double *);
 void print_polynomial(double ** coefficients, int order);
 void print_complex(double * complex);
 double * power_complex(double * complex, int power);
-//double * multiply_complex(double * complex1, double * complex2);
-double * divide_complex(double * complex1, double * complex2);
+//double * divide_complex(double * complex1, double * complex2);
 double * apply_function(double ** coefficient, int order, double * value);
 double * newton_step(double ** coefficient, int order, double * current_value);
 double ** calculate_derivative(double ** coefficient, int order);
@@ -117,17 +116,7 @@ double * apply_function(double ** coefficients, int order, double * value) {
     return result;
 }
 
-/**
- * Multiply two complex numbers.
- */
- /*
-double * multiply_complex(double * complex1, double * complex2) {
-    double * result = (double *) malloc(2 * sizeof(double));
-    result[0] = complex1[0] * complex2[0] - complex1[1] * complex2[1];
-    result[1] = complex1[0] * complex2[1] + complex1[1] * complex2[0];
-    return result;
-}
-*/
+
 /**
  * Calculates raising a complex number to the power specified.
  */
@@ -178,9 +167,7 @@ double ** calculate_derivative(double ** coefficient, int order) {
 double * divide_complex(double * complex1, double * complex2) {
     double * result = (double *) malloc(2 * sizeof(double));
     double * inverted_denominator = invert_complex(complex2);
-
-    print_complex(inverted_denominator);
-
+    
     result = multiply_complex(complex1, inverted_denominator);
     double norma = pow(complex2[0], 2) + powf(complex2[1], 2);
     // (a+bi) / (c+di) = ((a+bi)*(c-di))/((c+di)(c-di)) = ((a+bi)*(c-di))/(c^2 +d^2)
