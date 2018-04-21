@@ -5,75 +5,72 @@ section .data
     dq 1.0
 
 section .text
-  global invert_complex, add_complex, subtract_complex, multiply_complex
-;  global add_complex, subtract_complex
+  global invert_complex, add_complex, subtract_complex, multiply_complex, divide_complex
   extern malloc, free, scanf, printf
-
+  global power_complex
 
 ; ==== Power complex ====
+
 power_complex:
-	push   rbp
-	mov	   rbp, rsp
-	sub	   rsp, 32
-	mov  	 [rbp - 24], rdi
-	mov	   [rbp - 28], rsi
-	mov    rdi, 16
-	call	 malloc
-  mov    [rbp - 16], rax
+.LFB7:
+push	rbp
+mov	  rbp, rsp
+sub 	rsp, 32
+mov	  [rbp - 24], rdi
+mov	  [rbp - 28], esi
+mov	  edi, 16
+call	malloc
 
-  ; If power <= 0 ?
-	cmp	   qword[rbp - 28], 0
-	jg	   .power_complex_not_zero_power
-
-  ; Power of zero. Assign 1 and 0.
-	mov    rax, [rbp - 16]
-	movsd	 xmm0, [_1]
-	movsd  [rax], xmm0
-	mov	rax, [rbp - 16]
-	add	rax, 8
-	pxor	xmm0, xmm0
-	movsd	[rax], xmm0
-	mov	rax, [rbp - 16]
-	jmp	.power_complex_end
-.power_complex_not_zero_power:
-  ; power == 1 ?
-	cmp	qword[rbp - 28], 1
-	jne	.power_complex_one_power
-	mov	rax, [rbp - 24]
-	movsd	xmm0, [rax]
-	mov	rax, [rbp - 16]
-	movsd	[rax], xmm0
-	mov	rax, [rbp - 16]
-	mov	rax, [rbp - 24]
-	movsd	xmm0, [rax + 8]
-	movsd	[rdx], xmm0
-	mov	rax, [rbp - 16]
-	jmp	.power_complex_end
-.power_complex_one_power:
-	mov	rax, [rbp - 16]
-	mov	rdi, rax
-	call	free
-	mov	rax, [rbp - 28]
-	lea	rdx, [rax - 1]
-	mov	rax, [rbp - 24]
-	mov	rsi, rdx
-	mov	rdi, rax
-	call	power_complex
-	mov	[rbp - 8], rax
-	mov	rdx, [rbp - 24]
-	mov	rax, [rbp - 8]
-	mov	rsi, rdx
-	mov	rdi, rax
-	call	multiply_complex
-	mov	[rbp - 16], rax
-	mov	rax, [rbp - 8]
-	mov	rdi, rax
-	call	free
-	mov	rax, [rbp - 16]
-.power_complex_end:
-	leave
-	ret
-
+mov	 [rbp - 16], rax
+cmp  word[rbp - 28], 0
+jg	.L24
+mov	rax, [rbp - 16]
+movsd	xmm0, [_1]
+movsd	[rax], xmm0
+mov	rax, [rbp - 16]
+add	rax, 8
+pxor	xmm0, xmm0
+movsd	[rax], xmm0
+mov	rax, [rbp - 16]
+jmp	.L25
+.L24:
+cmp	word[rbp - 28], 1
+jne	.L26
+mov	rax, [rbp -24]
+movsd	xmm0, [rax]
+mov	rax, [rbp - 16]
+movsd	[rax], xmm0
+mov	rax, [rbp - 16]
+lea rdx, [rax + 8]
+mov	rax, [rbp - 24]
+movsd	xmm0, [rax + 8]
+movsd	[rdx], xmm0
+mov	rax, [rbp - 16]
+jmp	.L25
+.L26:
+mov	rax, [rbp - 16]
+mov	rdi, rax
+call	free
+mov	 eax, [rbp - 28]
+lea	edx, [rax -1]
+mov	rax, [rbp - 24]
+mov	esi, edx
+mov	rdi, rax
+call	power_complex
+mov	[rbp - 8], rax
+mov	rdx, [rbp - 24]
+mov	rax, [rbp - 8]
+mov	rsi, rdx
+mov	rdi, rax
+call multiply_complex
+mov	[rbp - 16], rax
+mov	rax, [rbp - 8]
+mov	rdi, rax
+call	free
+mov	rax, [rbp - 16]
+.L25:
+  leave
+  ret
 ; ==== Invert complex ====
 invert_complex:
   ; Generic start
@@ -304,70 +301,72 @@ sub rsp, 32
   leave
   ret
 
+  ; ===== Divide complex ======
+  divide_complex:
+  ; Generic start
+  push rbp
+  mov rbp, rsp
 
-; ===== Divide complex ======
-divide_complex:
-; Generic start
-push rbp
-mov rbp, rsp
+  ; Increase stack size.
+  sub rsp, 48
 
-; Increase stack size.
-sub rsp, 64
+  ; Save rdi and rsi on stack and allocate memory for the new complex number.
+  mov	[rbp-40], rdi
+  mov	[rbp-48], rsi
+  mov	rdi, 16
+  call	malloc
 
-; Save rdi and rsi on stack and allocate memory for the new complex number.
-mov	[rbp-40], rdi
-mov	[rbp-48], rsi
-mov	rdi, 16
-call	malloc
+  ; Get complex2 to rax, and use the invert_complex function.
+  mov	[rbp-24], rax
+  mov	rax, [rbp-48]
+  mov	rdi, rax
+  call	invert_complex
 
-	movq	%rax, -24(%rbp)
-	.loc 1 169 0
-	movq	-48(%rbp), %rax
-	movq	%rax, %rdi
-	call	invert_complex
-	movq	%rax, -16(%rbp)
-	.loc 1 171 0
-	movq	-16(%rbp), %rdx
-	movq	-40(%rbp), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	multiply_complex
-	movq	%rax, -24(%rbp)
-	.loc 1 172 0
-	movq	-48(%rbp), %rax
-	movq	(%rax), %rax
-	movsd	.LC9(%rip), %xmm0
-	movapd	%xmm0, %xmm1
-	movq	%rax, -56(%rbp)
-	movsd	-56(%rbp), %xmm0
-	call	pow
-	movsd	%xmm0, -56(%rbp)
-	movq	-48(%rbp), %rax
-	addq	$8, %rax
-	movsd	(%rax), %xmm0
-	cvtsd2ss	%xmm0, %xmm0
-	movss	.LC10(%rip), %xmm1
-	call	powf
-	cvtss2sd	%xmm0, %xmm0
-	addsd	-56(%rbp), %xmm0
-	movsd	%xmm0, -8(%rbp)
-	.loc 1 175 0
-	movq	-24(%rbp), %rax
-	movsd	(%rax), %xmm0
-	divsd	-8(%rbp), %xmm0
-	movq	-24(%rbp), %rax
-	movsd	%xmm0, (%rax)
-	.loc 1 176 0
-	movq	-24(%rbp), %rax
-	addq	$8, %rax
-	movq	-24(%rbp), %rdx
-	addq	$8, %rdx
-	movsd	(%rdx), %xmm0
-	divsd	-8(%rbp), %xmm0
-	movsd	%xmm0, (%rax)
-	.loc 1 179 0
-	movq	-16(%rbp), %rax
-	movq	%rax, %rdi
+  ; rax - get complex1 and put it in rdi
+  ; rdx - get the result from invert_complex fun and put it in rsi
+  mov	[rbp-16], rax
+  mov	rdx ,[rbp-16]
+  mov	rax, [rbp-40]
+  mov	rsi, rdx
+  mov	rdi, rax
+  call	multiply_complex
+
+
+  mov	[rbp-24], rax
+  ; xmm1 get complex2 real part
+  mov	rax, [rbp-48]
+	movsd	xmm1, [rax]
+  mulsd xmm1, xmm1
+	; mov	rax, [rbp-24]
+	; movsd	xmm0, [rax]
+	; mulsd	xmm1, xmm0
+
+  ; xmm1 get complex2 imaginery part
+	mov	rax, [rbp-48]
+	add	rax, 8
+	movsd	xmm0, [rax]
+	mulsd	xmm0, xmm0
+  ; Add both values
+	addsd	xmm0, xmm1
+  ; Divide norma(sum above) from result(result of multiply_complex) real part
+	movsd	[rbp-8], xmm0
+	mov	rax, [rbp-24]
+	movsd	xmm0, [rax]
+	divsd	xmm0, [rbp-8]
+  ; rax- result real number, rdx- result imaginery number
+	mov	rax, [rbp-24]
+	movsd	[rax], xmm0
+	mov	rax, [rbp-24]
+	add	rax, 8
+	mov	rdx, [rbp-24]
+	add	rdx, 8
+	movsd	xmm0, [rdx]
+  ; Divide norma from result imaginery part
+  ; Update result
+	divsd	xmm0, [rbp-8]
+	movsd	[rax], xmm0
+	mov	rax, [rbp-16]
+	mov	rdi, rax
 	call	free
 
   ; Return address of new number.
