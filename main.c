@@ -1,11 +1,13 @@
 // Global debug variable.
 #define debug 0
-#define RUN_LIMIT 10
+#define RUN_LIMIT 100
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+
+extern double * invert_complex(double *);
 
 void print_polynomial(double ** coefficients, int order);
 void print_complex(double * complex);
@@ -14,7 +16,7 @@ double * add_complex(double * complex1, double * complex2);
 double * subtract_complex(double * complex1, double * complex2);
 double * multiply_complex(double * complex1, double * complex2);
 double * divide_complex(double * complex1, double * complex2);
-double * invert_complex(double * complex);
+//double * invert_complex(double * complex);
 double * apply_function(double ** coefficient, int order, double * value);
 double * newton_step(double ** coefficient, int order, double * current_value);
 double ** calculate_derivative(double ** coefficient, int order);
@@ -84,8 +86,11 @@ void print_polynomial(double ** coefficients, int order) {
   printf("\n");
 }
 
+/**
+ * Fromat and print the complex number.
+ */
 void print_complex(double * complex) {
-  printf("%lf %lfi\n", complex[0], complex[1]);
+  printf("%e %ei\n", complex[0], complex[1]);
 }
 
 /**
@@ -152,13 +157,13 @@ double * power_complex(double * complex, int power) {
  * Gets a derivative of a coefficient representation of a polynom.
  */
 double ** calculate_derivative(double ** coefficient, int order) {
-    double ** derivative = (double **) malloc((order) * sizeof(double));
-    for(int index = 1; index <= order ; index++){
-        derivative[index-1] = (double *) malloc(2 * sizeof(double));
-        derivative[index-1][0] = index * coefficient[index][0];
-        derivative[index-1][1] = index * coefficient[index][1];
-    }
-    return derivative;
+  double ** derivative = (double **) malloc((order) * sizeof(double));
+  for(int index = 1; index <= order ; index++){
+    derivative[index - 1] = (double *) malloc(2 * sizeof(double));
+    derivative[index - 1][0] = index * coefficient[index][0];
+    derivative[index - 1][1] = index * coefficient[index][1];
+  }
+  return derivative;
 }
 
 /**
@@ -211,7 +216,7 @@ double * subtract_complex(double * complex1, double * complex2) {
 
 /**
  * Get invert of a complex value.
- */
+ *
 double * invert_complex(double * complex) {
   double * result = (double *) malloc(2 * sizeof(double));
 
@@ -219,7 +224,7 @@ double * invert_complex(double * complex) {
   result[1] = 0.0 - complex[1];
 
   return result;
-}
+} */
 
 /**
  * Create next Z_n in the Newton-Raphson analysis.
