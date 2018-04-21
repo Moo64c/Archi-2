@@ -7,7 +7,210 @@ section .data
 section .text
   global invert_complex, add_complex, subtract_complex, multiply_complex, divide_complex, newton_step
   extern malloc, free, scanf, printf, calculate_derivative
-  global power_complex, apply_function
+  global power_complex, apply_function, main
+
+  string1:
+    db 'epsilon = %lf', 0xa, 0
+  string2:
+    db	'order = %d', 0xa, 0
+  string3:
+    db 'coeff %d', 0
+  string4:
+    db	' = %lf %lf', 0xa, 0
+  string5:
+    db	'initial = %lf %lf', 0
+  string6:
+    db	'root = %e %ei', 0xa, 0
+
+main:
+	push rbp
+	mov	rbp, rsp
+	push rbx
+	sub	rsp, 152
+	pxor	xmm0, xmm0
+	movsd	qword  [rbp-96], xmm0
+	mov	dword  [rbp-100], 0
+	lea	rax, [rbp-96]
+	mov	rsi, rax
+	mov	edi, string1
+	mov	eax, 0
+	call	scanf
+	lea	rax, [rbp-100]
+	mov	rsi, rax
+	mov	edi, string2
+	mov	eax, 0
+	call	scanf
+	mov	eax, dword  [rbp-100]
+	add	eax, 1
+	cdqe
+	sal	rax, 3
+	mov	rdi, rax
+	call	malloc
+	mov	qword  [rbp-56], rax
+.LBB2:
+	mov	dword  [rbp-20], 0
+	jmp	.L2
+.L3:
+	mov	eax, dword  [rbp-20]
+	cdqe
+	lea	rdx, [0+rax*8]
+	mov	rax, qword  [rbp-56]
+	lea	rbx, [rdx+rax]
+	mov	edi, 16
+	call	malloc
+	mov	qword  [rbx], rax
+	mov	eax, dword  [rbp-20]
+	cdqe
+	lea	rdx, [0+rax*8]
+	mov	rax, qword  [rbp-56]
+	add	rax, rdx
+	mov	rax, qword  [rax]
+	pxor	xmm0, xmm0
+	movsd	qword  [rax], xmm0
+	mov	eax, dword  [rbp-20]
+	cdqe
+	lea	rdx, [0+rax*8]
+	mov	rax, qword  [rbp-56]
+	add	rax, rdx
+	mov	rax, qword  [rax]
+	add	rax, 8
+	pxor	xmm0, xmm0
+	movsd	qword  [rax], xmm0
+	add	dword  [rbp-20], 1
+.L2:
+	mov	eax, dword  [rbp-100]
+	add	eax, 1
+	cmp	eax, dword  [rbp-20]
+	jg	.L3
+.LBE2:
+	mov	qword  [rbp-64], string3
+	mov	qword  [rbp-72], string4
+	mov	dword  [rbp-132], 0
+.LBB3:
+	mov	eax, dword  [rbp-100]
+	mov	dword  [rbp-24], eax
+	jmp	.L4
+.L5:
+	lea	rdx, [rbp-132]
+	mov	rax, qword  [rbp-64]
+	mov	rsi, rdx
+	mov	rdi, rax
+	mov	eax, 0
+	call	scanf
+	mov	eax, dword  [rbp-132]
+	cdqe
+	lea	rdx, [0+rax*8]
+	mov	rax, qword  [rbp-56]
+	add	rax, rdx
+	mov	rax, qword  [rax]
+	lea	rdx, [rax+8]
+	mov	eax, dword  [rbp-132]
+	cdqe
+	lea	rcx, [0+rax*8]
+	mov	rax, qword  [rbp-56]
+	add	rax, rcx
+	mov	rcx, qword  [rax]
+	mov	rax, qword  [rbp-72]
+	mov	rsi, rcx
+	mov	rdi, rax
+	mov	eax, 0
+	call	scanf
+	sub	dword  [rbp-24], 1
+.L4:
+	cmp	dword  [rbp-24], 0
+	jns	.L5
+.LBE3:
+	mov	qword  [rbp-64], string5
+	lea	rax, [rbp-128]
+	lea	rdx, [rax+8]
+	lea	rcx, [rbp-128]
+	mov	rax, qword  [rbp-64]
+	mov	rsi, rcx
+	mov	rdi, rax
+	mov	eax, 0
+	call	scanf
+	mov	dword  [rbp-28], 0
+	lea	rax, [rbp-128]
+	mov	qword  [rbp-40], rax
+	mov	ecx, dword  [rbp-100]
+	mov	rdx, qword  [rbp-40]
+	mov	rax, qword  [rbp-56]
+	mov	esi, ecx
+	mov	rdi, rax
+	call	apply_function
+	mov	qword  [rbp-80], rax
+	mov	rax, qword  [rbp-80]
+	movsd	xmm1, qword  [rax]
+	mov	rax, qword  [rbp-80]
+	movsd	xmm0, qword  [rax]
+	mulsd	xmm1, xmm0
+	mov	rax, qword  [rbp-80]
+	add	rax, 8
+	movsd	xmm2, qword  [rax]
+	mov	rax, qword  [rbp-80]
+	add	rax, 8
+	movsd	xmm0, qword  [rax]
+	mulsd	xmm0, xmm2
+	addsd	xmm0, xmm1
+	movsd	qword  [rbp-48], xmm0
+	jmp	.L6
+.L9:
+	mov	rax, qword  [rbp-40]
+	mov	qword  [rbp-88], rax
+	mov	ecx, dword  [rbp-100]
+	mov	rdx, qword  [rbp-88]
+	mov	rax, qword  [rbp-56]
+	mov	esi, ecx
+	mov	rdi, rax
+	call	newton_step
+	mov	qword  [rbp-40], rax
+	mov	ecx, dword  [rbp-100]
+	mov	rdx, qword  [rbp-40]
+	mov	rax, qword  [rbp-56]
+	mov	esi, ecx
+	mov	rdi, rax
+	call	apply_function
+	mov	qword  [rbp-80], rax
+	mov	rax, qword  [rbp-80]
+	movsd	xmm1, qword  [rax]
+	mov	rax, qword  [rbp-80]
+	movsd	xmm0, qword  [rax]
+	mulsd	xmm1, xmm0
+	mov	rax, qword  [rbp-80]
+	add	rax, 8
+	movsd	xmm2, qword  [rax]
+	mov	rax, qword  [rbp-80]
+	add	rax, 8
+	movsd	xmm0, qword  [rax]
+	mulsd	xmm0, xmm2
+	addsd	xmm0, xmm1
+	movsd	qword  [rbp-48], xmm0
+	add	dword  [rbp-28], 1
+.L6:
+	movsd	xmm1, qword  [rbp-96]
+	movsd	xmm0, qword  [rbp-96]
+	mulsd	xmm0, xmm1
+	movsd	xmm1, qword  [rbp-48]
+	ucomisd	xmm1, xmm0
+	jbe	.L7
+	cmp	dword  [rbp-28], 99
+.L7:
+	mov	rax, qword  [rbp-40]
+	add	rax, 8
+	movsd	xmm0, qword  [rax]
+	mov	rax, qword  [rbp-40]
+	mov	rax, qword  [rax]
+	movapd	xmm1, xmm0
+	mov	qword  [rbp-152], rax
+	movsd	xmm0, qword  [rbp-152]
+	mov	edi, string6
+	mov	eax, 2
+	call	printf
+	mov	eax, 0
+	add	rsp, 152
+	pop	rbx
+	pop	rbp
+	ret
 
 ; ==== Apply function ===
 apply_function:
