@@ -63,36 +63,41 @@ main:
 
   ; index = 0 -> [rbp - 20]
   mov	dword[rbp - 20], 0
-  jmp	.L2
+  jmp	.check_coeffiecient_allocation_condition
   .coefficient_allocation_loop:
-  mov	eax, dword[rbp - 20]
-  lea	rdx, [0+rax*8]
-  mov	rax, qword[rbp-56]
-  lea	rbx, [rdx+rax]
-  mov	edi, 16
-  call	malloc
-  mov	qword[rbx], rax
-  mov	eax, dword[rbp-20]
-  lea	rdx, [0+rax*8]
-  mov	rax, qword[rbp-56]
-  add	rax, rdx
-  mov	rax, qword[rax]
-  pxor	xmm0, xmm0
-  movsd	qword[rax], xmm0
-  mov	eax, dword[rbp-20]
-  lea	rdx, [0+rax*8]
-  mov	rax, qword[rbp-56]
-  add	rax, rdx
-  mov	rax, qword[rax]
-  add	rax, 8
-  pxor	xmm0, xmm0
-  movsd	qword[rax], xmm0
-  add	dword[rbp-20], 1
-  .L2:
-  mov	eax, dword[rbp - 100]
-  add	eax, 1
-  cmp	eax, dword[rbp - 20]
-  jg	.coefficient_allocation_loop
+    ; rax <- index
+    mov	eax, dword[rbp - 20]
+    lea	rax, [rax * 8]
+    ; Pointer to coefficient array start -> rbx.
+    ; rbx isn't touched by malloc...
+    mov	rbx, qword[rbp - 56]
+    add	rbx, rax
+    mov	edi, 16
+    call	malloc
+    ; Newely allocated space for coefficients.
+    mov	qword[rbx], rax
+
+    ; Init to 0.0 in real and imaginery.
+    mov	rax, qword[rbx]
+    pxor	xmm0, xmm0
+    movsd	qword[rax], xmm0
+
+    add	rax, 8
+    pxor	xmm0, xmm0
+    movsd	qword[rax], xmm0
+
+    ; index++;
+    add	dword[rbp - 20], 1
+  .check_coeffiecient_allocation_condition:
+    ; Order + 1 -> rax
+    mov	eax, dword[rbp - 100]
+    add	eax, 1
+    ; compare order + 1 against index
+    cmp	eax, dword[rbp - 20]
+    ; index <= order + 1 --- keep looping.
+    jg	.coefficient_allocation_loop
+
+  ; Done allocating.
   mov	qword[rbp-64], string3
   mov	qword[rbp-72], string4
   mov	dword[rbp-132], 0
