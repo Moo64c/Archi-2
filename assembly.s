@@ -199,10 +199,7 @@ main:
   mulsd	xmm0, xmm1
   movsd	xmm1, qword[rbp - 48]
   ucomisd	xmm1, xmm0
-  jbe	.L7
-  cmp	dword[rbp - 28], 99
-  jle	.L9
-  .L7:
+  ja	.L9
   mov	rax, qword[rbp - 40]
   add	rax, 8
   movsd	xmm0, qword[rax]
