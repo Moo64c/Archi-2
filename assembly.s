@@ -17,9 +17,9 @@ section .text
     db 'coeff %d', 0
   string_coefficient_load_part_2:
     db	' = %lf %lf', 0xa, 0
-  string5:
+  string_load_initial:
     db	'initial = %lf %lf', 0
-  string6:
+  string_print_result:
     db	'root = %e %ei', 0xa, 0
 
 main:
@@ -107,121 +107,115 @@ main:
   mov	dword [rbp - 24], eax
   jmp	.check_coeffiecient_loading_condition
   .coeffiecient_loading_loop:
+    ; Load to coefficient index temporary [rbp - 132].
     lea	rsi, [rbp - 132]
-    mov	rax, qword[rbp - 64]
-    mov	rdi, rax
+    ; String 1.
+    mov	rdi, qword [rbp - 64]
     mov	eax, 0
     call	scanf
-    mov	eax, dword[rbp - 132]
-    lea	rdx, [rax * 8]
-    mov	rax, qword[rbp - 56]
+
+    ; Find where to store the new coefficients.
+    mov	eax, dword [rbp - 132]
+    lea	rax, [rax * 8]
+    mov	rdx, qword [rbp - 56]
     add	rax, rdx
-    mov	rax, qword[rax]
-    lea	rdx, [rax + 8]
-    mov	eax, dword[rbp-  132]
-    lea	rcx, [rax * 8]
-    mov	rax, qword[rbp - 56]
-    add	rax, rcx
-    mov	rcx, qword[rax]
-    mov	rax, qword[rbp-72]
-    mov	rsi, rcx
-    mov	rdi, rax
+    mov	rsi, qword [rax]
+    lea	rdx, [rsi + 8]
+    ; String 2.
+    mov	rdi, qword [rbp - 72]
     mov	eax, 0
     call	scanf
-    sub	dword[rbp-24], 1
+    sub	dword[rbp - 24], 1
   .check_coeffiecient_loading_condition:
     cmp	dword[rbp - 24], 0
     ; index => 0
     jns	.coeffiecient_loading_loop
-  .LBE3:
-  mov	qword[rbp-64], string5
-  lea	rax, [rbp-128]
-  lea	rdx, [rax+8]
-  lea	rcx, [rbp-128]
-  mov	rax, qword[rbp-64]
-  mov	rsi, rcx
-  mov	rdi, rax
-  mov	eax, 0
+
+  ; Load initial from user.
+  lea	rdx, [rbp - 120]
+  lea	rsi, [rbp - 128]
+  mov	rdi, string_load_initial
+  mov	rax, 0
   call	scanf
-  mov	dword[rbp-28], 0
-  lea	rax, [rbp-128]
-  mov	qword[rbp-40], rax
-  mov	ecx, dword[rbp-100]
-  mov	rdx, qword[rbp-40]
-  mov	rax, qword[rbp-56]
-  mov	esi, ecx
-  mov	rdi, rax
+
+  mov	dword [rbp - 28], 0
+  lea	rax, [rbp - 128]
+  mov	qword [rbp - 40], rax
+  mov	rdx, qword [rbp - 40]
+  mov	esi, dword [rbp - 100]
+  mov	rdi, qword [rbp - 56]
   call	apply_function
-  mov	qword[rbp-80], rax
-  mov	rax, qword[rbp-80]
-  movsd	xmm1, qword[rax]
-  mov	rax, qword[rbp-80]
-  movsd	xmm0, qword[rax]
+  mov	qword [rbp - 80], rax
+  mov	rax, qword [rbp - 80]
+  movsd	xmm1, qword [rax]
+  mov	rax, qword [rbp - 80]
+  movsd	xmm0, qword [rax]
   mulsd	xmm1, xmm0
-  mov	rax, qword[rbp-80]
+  mov	rax, qword [rbp - 80]
   add	rax, 8
-  movsd	xmm2, qword[rax]
-  mov	rax, qword[rbp-80]
+  movsd	xmm2, qword [rax]
+  mov	rax, qword [rbp - 80]
   add	rax, 8
-  movsd	xmm0, qword[rax]
+  movsd	xmm0, qword [rax]
   mulsd	xmm0, xmm2
   addsd	xmm0, xmm1
-  movsd	qword[rbp-48], xmm0
+  movsd	qword [rbp-48], xmm0
   jmp	.L6
   .L9:
-  mov	rax, qword[rbp-40]
-  mov	qword[rbp-88], rax
-  mov	ecx, dword[rbp-100]
-  mov	rdx, qword[rbp-88]
-  mov	rax, qword[rbp-56]
+  mov	rax, qword [rbp - 40]
+  mov	qword[rbp - 88], rax
+  mov	ecx, dword[rbp - 100]
+  mov	rdx, qword[rbp - 88]
+  mov	rax, qword[rbp - 56]
   mov	esi, ecx
   mov	rdi, rax
   call	newton_step
-  mov	qword[rbp-40], rax
-  mov	ecx, dword[rbp-100]
-  mov	rdx, qword[rbp-40]
-  mov	rax, qword[rbp-56]
+  mov	qword[rbp - 40], rax
+  mov	ecx, dword[rbp - 100]
+  mov	rdx, qword[rbp - 40]
+  mov	rax, qword[rbp - 56]
   mov	esi, ecx
   mov	rdi, rax
   call	apply_function
-  mov	qword[rbp-80], rax
-  mov	rax, qword[rbp-80]
+  mov	qword[rbp - 80], rax
+  mov	rax, qword[rbp - 80]
   movsd	xmm1, qword[rax]
-  mov	rax, qword[rbp-80]
+  mov	rax, qword[rbp - 80]
   movsd	xmm0, qword[rax]
   mulsd	xmm1, xmm0
-  mov	rax, qword[rbp-80]
+  mov	rax, qword[rbp - 80]
   add	rax, 8
   movsd	xmm2, qword[rax]
-  mov	rax, qword[rbp-80]
+  mov	rax, qword[rbp - 80]
   add	rax, 8
   movsd	xmm0, qword[rax]
   mulsd	xmm0, xmm2
   addsd	xmm0, xmm1
-  movsd	qword[rbp-48], xmm0
-  add	dword[rbp-28], 1
+  movsd	qword[rbp - 48], xmm0
+  add	dword[rbp - 28], 1
   .L6:
-  movsd	xmm1, qword[rbp-96]
-  movsd	xmm0, qword[rbp-96]
+  movsd	xmm1, qword[rbp - 96]
+  movsd	xmm0, qword[rbp - 96]
   mulsd	xmm0, xmm1
-  movsd	xmm1, qword[rbp-48]
+  movsd	xmm1, qword[rbp - 48]
   ucomisd	xmm1, xmm0
   jbe	.L7
-  cmp	dword[rbp-28], 99
+  cmp	dword[rbp - 28], 99
   jle	.L9
   .L7:
-  mov	rax, qword[rbp-40]
+  mov	rax, qword[rbp - 40]
   add	rax, 8
   movsd	xmm0, qword[rax]
-  mov	rax, qword[rbp-40]
+  mov	rax, qword[rbp - 40]
   mov	rax, qword[rax]
   movapd	xmm1, xmm0
-  mov	qword[rbp-152], rax
-  movsd	xmm0, qword[rbp-152]
-  mov	edi, string6
-  mov	eax, 2
+  mov	qword[rbp - 152], rax
+  movsd	xmm0, qword[rbp - 152]
+  ; Print result.
+  mov	edi, string_print_result
+  mov	rax, 2
   call	printf
-  mov	eax, 0
+  mov	rax, 0
   add	rsp, 152
   pop	rbx
   pop	rbp
