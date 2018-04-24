@@ -7,7 +7,225 @@ section .data
 section .text
   global invert_complex, add_complex, subtract_complex, multiply_complex, divide_complex, newton_step, calculate_derivative
   extern malloc, free, scanf, printf
-  global power_complex, apply_function
+  global power_complex, apply_function, main
+
+  string_scanf_epsilon:
+    db 'epsilon = %lf', 0xa, 0
+  string_scanf_order:
+    db	'order = %d', 0xa, 0
+  string_coefficient_load_part_1:
+    db 'coeff %d', 0
+  string_coefficient_load_part_2:
+    db	' = %lf %lf', 0xa, 0
+  string5:
+    db	'initial = %lf %lf', 0
+  string6:
+    db	'root = %e %ei', 0xa, 0
+
+main:
+  ; Standard start.
+  push	rbp
+  mov	rbp, rsp
+  ; Save rbx, otherwise bad things happen.
+  push	rbx
+
+  ; Allocate stack space, 19 (* 8).
+  sub	rsp, 152
+
+  ; Epsilon = 0.0 .
+  pxor	xmm0, xmm0
+  movsd	qword [rbp - 96], xmm0
+  ; Order = 0 .
+  mov	dword [rbp - 100], 0
+
+  ; Call scanf("epsilon = %lf\n") -> [rbp - 96];
+  lea	rsi, [rbp - 96]
+  mov	edi, string_scanf_epsilon
+  mov	eax, 0
+  call	scanf
+
+  ; Call scanf("order = %i\n") -> [rbp - 100];
+  lea	rsi, [rbp - 100]
+  mov	edi, string_scanf_order
+  mov	eax, 0
+  call	scanf
+
+  ; Allocate space for the pointers to the coefficients.
+  ; Store in [rbp - 56]
+  ; Load order (4 int - bytes).
+  mov	eax, dword [rbp - 100]
+  ; Size = (order + 1) * sizeof(double *)
+  add	rax, 1
+  sal	rax, 3
+  mov	rdi, rax
+  call	malloc
+  mov	qword [rbp - 56], rax
+
+  ; index = 0 -> [rbp - 20]
+  mov	dword[rbp - 20], 0
+  jmp	.check_coeffiecient_allocation_condition
+  .coefficient_allocation_loop:
+    ; rax <- index
+    mov	eax, dword [rbp - 20]
+    lea	rax, [rax * 8]
+    ; Pointer to coefficient array start -> rbx.
+    ; rbx isn't touched by malloc...
+    mov	rbx, qword [rbp - 56]
+    add	rbx, rax
+    mov	edi, 16
+    call	malloc
+    ; Newely allocated space for coefficients.
+    mov	qword[rbx], rax
+
+    ; Init to 0.0 in real and imaginery.
+    mov	rax, qword [rbx]
+    pxor	xmm0, xmm0
+    movsd	qword [rax], xmm0
+
+    add	rax, 8
+    pxor	xmm0, xmm0
+    movsd	qword [rax], xmm0
+
+    ; index++;
+    add	dword [rbp - 20], 1
+  .check_coeffiecient_allocation_condition:
+    ; Order + 1 -> rax
+    mov	eax, dword [rbp - 100]
+    add	eax, 1
+    ; compare order + 1 against index
+    cmp	eax, dword [rbp - 20]
+    ; index <= order + 1 --- keep looping.
+    jg	.coefficient_allocation_loop
+
+  ; Done allocating.
+  ; Prepare to accept coefficients from the user.
+  mov	qword [rbp - 64], string_coefficient_load_part_1
+  mov	qword [rbp - 72], string_coefficient_load_part_2
+  mov	dword [rbp - 132], 0
+  ; index = order.
+  mov	eax, dword [rbp - 100]
+  mov	dword [rbp - 24], eax
+  jmp	.check_coeffiecient_loading_condition
+  .coeffiecient_loading_loop:
+    lea	rsi, [rbp - 132]
+    mov	rax, qword[rbp - 64]
+    mov	rdi, rax
+    mov	eax, 0
+    call	scanf
+    mov	eax, dword[rbp - 132]
+    lea	rdx, [rax * 8]
+    mov	rax, qword[rbp - 56]
+    add	rax, rdx
+    mov	rax, qword[rax]
+    lea	rdx, [rax + 8]
+    mov	eax, dword[rbp-  132]
+    lea	rcx, [rax * 8]
+    mov	rax, qword[rbp - 56]
+    add	rax, rcx
+    mov	rcx, qword[rax]
+    mov	rax, qword[rbp-72]
+    mov	rsi, rcx
+    mov	rdi, rax
+    mov	eax, 0
+    call	scanf
+    sub	dword[rbp-24], 1
+  .check_coeffiecient_loading_condition:
+    cmp	dword[rbp - 24], 0
+    ; index => 0
+    jns	.coeffiecient_loading_loop
+  .LBE3:
+  mov	qword[rbp-64], string5
+  lea	rax, [rbp-128]
+  lea	rdx, [rax+8]
+  lea	rcx, [rbp-128]
+  mov	rax, qword[rbp-64]
+  mov	rsi, rcx
+  mov	rdi, rax
+  mov	eax, 0
+  call	scanf
+  mov	dword[rbp-28], 0
+  lea	rax, [rbp-128]
+  mov	qword[rbp-40], rax
+  mov	ecx, dword[rbp-100]
+  mov	rdx, qword[rbp-40]
+  mov	rax, qword[rbp-56]
+  mov	esi, ecx
+  mov	rdi, rax
+  call	apply_function
+  mov	qword[rbp-80], rax
+  mov	rax, qword[rbp-80]
+  movsd	xmm1, qword[rax]
+  mov	rax, qword[rbp-80]
+  movsd	xmm0, qword[rax]
+  mulsd	xmm1, xmm0
+  mov	rax, qword[rbp-80]
+  add	rax, 8
+  movsd	xmm2, qword[rax]
+  mov	rax, qword[rbp-80]
+  add	rax, 8
+  movsd	xmm0, qword[rax]
+  mulsd	xmm0, xmm2
+  addsd	xmm0, xmm1
+  movsd	qword[rbp-48], xmm0
+  jmp	.L6
+  .L9:
+  mov	rax, qword[rbp-40]
+  mov	qword[rbp-88], rax
+  mov	ecx, dword[rbp-100]
+  mov	rdx, qword[rbp-88]
+  mov	rax, qword[rbp-56]
+  mov	esi, ecx
+  mov	rdi, rax
+  call	newton_step
+  mov	qword[rbp-40], rax
+  mov	ecx, dword[rbp-100]
+  mov	rdx, qword[rbp-40]
+  mov	rax, qword[rbp-56]
+  mov	esi, ecx
+  mov	rdi, rax
+  call	apply_function
+  mov	qword[rbp-80], rax
+  mov	rax, qword[rbp-80]
+  movsd	xmm1, qword[rax]
+  mov	rax, qword[rbp-80]
+  movsd	xmm0, qword[rax]
+  mulsd	xmm1, xmm0
+  mov	rax, qword[rbp-80]
+  add	rax, 8
+  movsd	xmm2, qword[rax]
+  mov	rax, qword[rbp-80]
+  add	rax, 8
+  movsd	xmm0, qword[rax]
+  mulsd	xmm0, xmm2
+  addsd	xmm0, xmm1
+  movsd	qword[rbp-48], xmm0
+  add	dword[rbp-28], 1
+  .L6:
+  movsd	xmm1, qword[rbp-96]
+  movsd	xmm0, qword[rbp-96]
+  mulsd	xmm0, xmm1
+  movsd	xmm1, qword[rbp-48]
+  ucomisd	xmm1, xmm0
+  jbe	.L7
+  cmp	dword[rbp-28], 99
+  jle	.L9
+  .L7:
+  mov	rax, qword[rbp-40]
+  add	rax, 8
+  movsd	xmm0, qword[rax]
+  mov	rax, qword[rbp-40]
+  mov	rax, qword[rax]
+  movapd	xmm1, xmm0
+  mov	qword[rbp-152], rax
+  movsd	xmm0, qword[rbp-152]
+  mov	edi, string6
+  mov	eax, 2
+  call	printf
+  mov	eax, 0
+  add	rsp, 152
+  pop	rbx
+  pop	rbp
+  ret
 
 ; ==== Apply function ===
 apply_function:
@@ -41,9 +259,7 @@ apply_function:
 	call power_complex
 	mov	[rbp - 8], rax
 
-  ; Extend result.
 	mov	eax, [rbp - 20]
-	cdqe
 	lea	rdx, [rax * 8]
 
   ; Multiply (value)^order by the coefficient.

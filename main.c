@@ -7,6 +7,7 @@
 #include <string.h>
 #include <math.h>
 
+extern int main (void);
 extern double * invert_complex(double *);
 extern double * add_complex(double *, double *);
 extern double * subtract_complex(double *, double *);
@@ -20,6 +21,7 @@ extern double ** calculate_derivative(double **, int);
 void print_polynomial(double ** coefficients, int order);
 void print_complex(double * complex);
 
+/*
 int main(void) {
     // Specific input for this program.
     double epsilon = 0;
@@ -41,40 +43,37 @@ int main(void) {
         coefficients[initIndex][1] = 0.0;
     }
 
-    char acceptString[200];
+    char * acceptString = "coeff %d";
+    char * acceptString_part2 = " = %lf %lf\n";
+    int coefficient = 0;
     for (int coefficientindex = order; coefficientindex >= 0; coefficientindex--) {
-        sprintf(acceptString, "coeff %d = %s %s\n", coefficientindex, "%lf", "%lf");
-        scanf(acceptString, &coefficients[coefficientindex][0], &coefficients[coefficientindex][1]);
-    }
-    if (debug > 0) {
-      printf("epsilon: %e\norder: %d", epsilon, order);
-      printf("\nResult:\n");
-      print_polynomial(coefficients, order);
+      scanf(acceptString, &coefficient);
+      scanf(acceptString_part2, &coefficients[coefficient][0], &coefficients[coefficient][1]);
     }
 
-    sprintf(acceptString, "initial = %s %s\n", "%lf", "%lf");
+    acceptString = "initial = %lf %lf\n";
     scanf(acceptString, &initial[0], &initial[1]);
 
     int runs = 0;
     double * last;
     double * current = initial;
     double * current_value = apply_function(coefficients, order, current);
-    double distance = sqrt(current_value[0] * current_value[0] + current_value[1] * current_value[1]);
+    double distance = (current_value[0] * current_value[0] + current_value[1] * current_value[1]);
 
-    while ((distance > epsilon) && (runs < RUN_LIMIT)) {
+    while ((distance > (epsilon * epsilon)) && (runs < RUN_LIMIT)) {
       last = current;
       current = newton_step(coefficients, order, last);
       current_value = apply_function(coefficients, order, current);
-      distance = sqrt(current_value[0] * current_value[0] + current_value[1] * current_value[1]);
+      distance = (current_value[0] * current_value[0]) + (current_value[1] * current_value[1]);
       runs++;
     }
 
     // Done?
-    printf("root = ");
-    print_complex(current);
+    printf("root = %e %ei\n", current[0], current[1]);
 
     return 0;
 }
+*/
 
 /**
  * Debug - print the polynomial equation.
