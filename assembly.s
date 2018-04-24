@@ -786,6 +786,7 @@ sub rsp, 32
     	sal	rax, 3                       ; derivative index -1
     	lea	rdx, [rax-8]
     	mov	rax, [rbp-24]                ; derivative to rax.
+      ; rbx set to derivative[index - 1]
     	lea	rbx, [rdx+rax]
     	mov	edi, 16
     	call	malloc
