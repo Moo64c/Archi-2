@@ -1,7 +1,7 @@
 section .data
   neg_1:
     dq -1.0
-  _1:
+  pos_1:
     dq 1.0
 
 section .text
@@ -78,12 +78,10 @@ main:
     mov	qword[rbx], rax
 
     ; Init to 0.0 in real and imaginery.
+    pxor	xmm0, xmm0
     mov	rax, qword [rbx]
-    pxor	xmm0, xmm0
     movsd	qword [rax], xmm0
-
     add	rax, 8
-    pxor	xmm0, xmm0
     movsd	qword [rax], xmm0
 
     ; index++;
@@ -116,6 +114,7 @@ main:
 
     ; Find where to store the new coefficients.
     mov	eax, dword [rbp - 132]
+    ; index * 8
     lea	rax, [rax * 8]
     mov	rdx, qword [rbp - 56]
     add	rax, rdx
@@ -138,81 +137,80 @@ main:
   mov	rax, 0
   call	scanf
 
-  mov	dword [rbp - 28], 0
-  lea	rax, [rbp - 128]
-  mov	qword [rbp - 40], rax
-  mov	rdx, qword [rbp - 40]
+  ; current = initial
+  lea	rdx, [rbp - 128]
+  mov	qword [rbp - 40], rdx
+
+  ; Calculate initial distance - a^2 + b^2 of the function's value.
   mov	esi, dword [rbp - 100]
   mov	rdi, qword [rbp - 56]
   call	apply_function
+  ; a^2
   mov	qword [rbp - 80], rax
-  mov	rax, qword [rbp - 80]
   movsd	xmm1, qword [rax]
-  mov	rax, qword [rbp - 80]
-  movsd	xmm0, qword [rax]
-  mulsd	xmm1, xmm0
-  mov	rax, qword [rbp - 80]
-  add	rax, 8
-  movsd	xmm2, qword [rax]
-  mov	rax, qword [rbp - 80]
+  mulsd	xmm1, xmm1
+  ; b^2
   add	rax, 8
   movsd	xmm0, qword [rax]
-  mulsd	xmm0, xmm2
+  mulsd	xmm0, xmm0
+  ; Add up.
   addsd	xmm0, xmm1
-  movsd	qword [rbp-48], xmm0
-  jmp	.L6
-  .L9:
-  mov	rax, qword [rbp - 40]
-  mov	qword[rbp - 88], rax
-  mov	ecx, dword[rbp - 100]
-  mov	rdx, qword[rbp - 88]
-  mov	rax, qword[rbp - 56]
-  mov	esi, ecx
-  mov	rdi, rax
-  call	newton_step
-  mov	qword[rbp - 40], rax
-  mov	ecx, dword[rbp - 100]
-  mov	rdx, qword[rbp - 40]
-  mov	rax, qword[rbp - 56]
-  mov	esi, ecx
-  mov	rdi, rax
-  call	apply_function
-  mov	qword[rbp - 80], rax
-  mov	rax, qword[rbp - 80]
-  movsd	xmm1, qword[rax]
-  mov	rax, qword[rbp - 80]
-  movsd	xmm0, qword[rax]
-  mulsd	xmm1, xmm0
-  mov	rax, qword[rbp - 80]
-  add	rax, 8
-  movsd	xmm2, qword[rax]
-  mov	rax, qword[rbp - 80]
-  add	rax, 8
-  movsd	xmm0, qword[rax]
-  mulsd	xmm0, xmm2
-  addsd	xmm0, xmm1
-  movsd	qword[rbp - 48], xmm0
-  add	dword[rbp - 28], 1
-  .L6:
-  movsd	xmm1, qword[rbp - 96]
-  movsd	xmm0, qword[rbp - 96]
-  mulsd	xmm0, xmm1
-  movsd	xmm1, qword[rbp - 48]
-  ucomisd	xmm1, xmm0
-  ja	.L9
-  mov	rax, qword[rbp - 40]
-  add	rax, 8
-  movsd	xmm0, qword[rax]
-  mov	rax, qword[rbp - 40]
-  mov	rax, qword[rax]
-  movapd	xmm1, xmm0
-  mov	qword[rbp - 152], rax
-  movsd	xmm0, qword[rbp - 152]
+  movsd	qword [rbp - 48], xmm0
+  jmp	.check_apply_loop_condition
+
+  .apply_loop:
+    ; last = current
+    mov	rdx, qword [rbp - 40]
+    mov	qword[rbp - 88], rdx
+    mov	esi, dword[rbp - 100]
+    mov	rdi, qword[rbp - 56]
+    call	newton_step
+    ; rax = pointer to first double (a), second double - rax + 8.
+    ; current = newton_step(current).
+    mov	qword[rbp - 40], rax
+
+    ; Calculate new distance - a^2 + b^2 of the current function value.
+    ; f(current) -> [rbp - 80]
+    mov	rdx, rax
+    mov	esi, dword[rbp - 100]
+    mov	rdi, qword[rbp - 56]
+    call	apply_function
+    ;rax = pointer to first double (a), second double - rax+8
+    mov	qword[rbp - 80], rax
+    ; a^2
+    mov	rax, qword[rbp - 80]
+    movsd	xmm1, qword[rax]
+    mulsd	xmm1, xmm1
+    ; b^2
+    mov	rax, qword [rbp - 80]
+    add	rax, 8
+    movsd	xmm0, qword [rax]
+    mulsd	xmm0, xmm0
+    ; Add them.
+    addsd	xmm0, xmm1
+    ; save result
+    movsd	qword [rbp - 48], xmm0
+    ; index++
+  .check_apply_loop_condition:
+    ; Compare against epsilon ^ 2.
+    movsd	xmm0, qword [rbp - 96]
+    mulsd	xmm0, xmm0
+    ; Current distance.
+    movsd	xmm1, qword [rbp - 48]
+    ucomisd	xmm1, xmm0
+    ja .apply_loop
+
   ; Print result.
+  mov	rax, qword [rbp - 40]
+  movsd	xmm0, qword[rax]
+  add	rax, 8
+  movsd	xmm1, qword [rax]
   mov	edi, string_print_result
-  mov	rax, 2
   call	printf
+
+  ; Return 0.
   mov	rax, 0
+  ; Reset registers and fix stack.
   add	rsp, 152
   pop	rbx
   pop	rbp
@@ -319,7 +317,7 @@ power_complex:
   ; Power == 0.
   ; Return 1.0 0.0i .
   mov	rax, [rbp - 16]
-  movsd	xmm0, [_1]
+  movsd	xmm0, [pos_1]
   movsd	[rax], xmm0
   mov	rax, [rbp - 16]
   add	rax, 8
