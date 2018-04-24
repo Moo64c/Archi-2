@@ -5,15 +5,13 @@ section .data
     dq 1.0
 
 section .text
-  global invert_complex, add_complex, subtract_complex, multiply_complex
-  global divide_complex, newton_step, calculate_derivative
-  global power_complex, apply_function
-  global main
-  extern malloc, free, scanf, printf, calculate_derivative
+  global invert_complex, add_complex, subtract_complex, multiply_complex, divide_complex, newton_step, calculate_derivative
+  extern malloc, free, scanf, printf
+  global power_complex, apply_function, main
 
-  string1:
+  string_scanf_epsilon:
     db 'epsilon = %lf', 0xa, 0
-  string2:
+  string_scanf_order:
     db	'order = %d', 0xa, 0
   string3:
     db 'coeff %d', 0
@@ -25,194 +23,202 @@ section .text
     db	'root = %e %ei', 0xa, 0
 
 main:
-	push rbp
-	mov	rbp, rsp
-	push rbx
-	sub	rsp, 152
-	pxor	xmm0, xmm0
-	movsd	qword  [rbp-96], xmm0
-	mov	dword  [rbp-100], 0
-	lea	rax, [rbp-96]
-	mov	rsi, rax
-	mov	edi, string1
-	mov	eax, 0
-	call	scanf
-	lea	rax, [rbp-100]
-	mov	rsi, rax
-	mov	edi, string2
-	mov	eax, 0
-	call	scanf
-	mov	eax, dword  [rbp-100]
-	add	eax, 1
-	cdqe
-	sal	rax, 3
-	mov	rdi, rax
-	call	malloc
-	mov	qword  [rbp-56], rax
-.LBB2:
-	mov	dword  [rbp-20], 0
-	jmp	.L2
-.L3:
-	mov	eax, dword  [rbp-20]
-	cdqe
-	lea	rdx, [0+rax*8]
-	mov	rax, qword  [rbp-56]
-	lea	rbx, [rdx+rax]
-	mov	edi, 16
-	call	malloc
-	mov	qword  [rbx], rax
-	mov	eax, dword  [rbp-20]
-	cdqe
-	lea	rdx, [0+rax*8]
-	mov	rax, qword  [rbp-56]
-	add	rax, rdx
-	mov	rax, qword  [rax]
-	pxor	xmm0, xmm0
-	movsd	qword  [rax], xmm0
-	mov	eax, dword  [rbp-20]
-	cdqe
-	lea	rdx, [0+rax*8]
-	mov	rax, qword  [rbp-56]
-	add	rax, rdx
-	mov	rax, qword  [rax]
-	add	rax, 8
-	pxor	xmm0, xmm0
-	movsd	qword  [rax], xmm0
-	add	dword  [rbp-20], 1
-.L2:
-	mov	eax, dword  [rbp-100]
-	add	eax, 1
-	cmp	eax, dword  [rbp-20]
-	jg	.L3
-.LBE2:
-	mov	qword  [rbp-64], string3
-	mov	qword  [rbp-72], string4
-	mov	dword  [rbp-132], 0
-.LBB3:
-	mov	eax, dword  [rbp-100]
-	mov	dword  [rbp-24], eax
-	jmp	.L4
-.L5:
-	lea	rdx, [rbp-132]
-	mov	rax, qword  [rbp-64]
-	mov	rsi, rdx
-	mov	rdi, rax
-	mov	eax, 0
-	call	scanf
-	mov	eax, dword  [rbp-132]
-	cdqe
-	lea	rdx, [0+rax*8]
-	mov	rax, qword  [rbp-56]
-	add	rax, rdx
-	mov	rax, qword  [rax]
-	lea	rdx, [rax+8]
-	mov	eax, dword  [rbp-132]
-	cdqe
-	lea	rcx, [0+rax*8]
-	mov	rax, qword  [rbp-56]
-	add	rax, rcx
-	mov	rcx, qword  [rax]
-	mov	rax, qword  [rbp-72]
-	mov	rsi, rcx
-	mov	rdi, rax
-	mov	eax, 0
-	call	scanf
-	sub	dword  [rbp-24], 1
-.L4:
-	cmp	dword  [rbp-24], 0
-	jns	.L5
-.LBE3:
-	mov	qword  [rbp-64], string5
-	lea	rax, [rbp-128]
-	lea	rdx, [rax+8]
-	lea	rcx, [rbp-128]
-	mov	rax, qword  [rbp-64]
-	mov	rsi, rcx
-	mov	rdi, rax
-	mov	eax, 0
-	call scanf
-	mov	dword  [rbp-28], 0
-	lea	rax, [rbp-128]
-	mov	qword  [rbp-40], rax
-	mov	ecx, dword  [rbp-100]
-	mov	rdx, qword  [rbp-40]
-	mov	rax, qword  [rbp-56]
-	mov	esi, ecx
-	mov	rdi, rax
-	call	apply_function
-	mov	qword  [rbp-80], rax
-	mov	rax, qword  [rbp-80]
-	movsd	xmm1, qword  [rax]
-	mov	rax, qword  [rbp-80]
-	movsd	xmm0, qword  [rax]
-	mulsd	xmm1, xmm0
-	mov	rax, qword  [rbp-80]
-	add	rax, 8
-	movsd	xmm2, qword  [rax]
-	mov	rax, qword  [rbp-80]
-	add	rax, 8
-	movsd	xmm0, qword  [rax]
-	mulsd	xmm0, xmm2
-	addsd	xmm0, xmm1
-	movsd	qword  [rbp-48], xmm0
-	jmp	.L6
-.L9:
-	mov	rax, qword  [rbp-40]
-	mov	qword  [rbp-88], rax
-	mov	ecx, dword  [rbp-100]
-	mov	rdx, qword  [rbp-88]
-	mov	rax, qword  [rbp-56]
-	mov	esi, ecx
-	mov	rdi, rax
-	call	newton_step
-	mov	qword  [rbp-40], rax
-	mov	ecx, dword  [rbp-100]
-	mov	rdx, qword  [rbp-40]
-	mov	rax, qword  [rbp-56]
-	mov	esi, ecx
-	mov	rdi, rax
-	call	apply_function
-	mov	qword  [rbp-80], rax
-	mov	rax, qword  [rbp-80]
-	movsd	xmm1, qword  [rax]
-	mov	rax, qword  [rbp-80]
-	movsd	xmm0, qword  [rax]
-	mulsd	xmm1, xmm0
-	mov	rax, qword  [rbp-80]
-	add	rax, 8
-	movsd	xmm2, qword  [rax]
-	mov	rax, qword  [rbp-80]
-	add	rax, 8
-	movsd	xmm0, qword  [rax]
-	mulsd	xmm0, xmm2
-	addsd	xmm0, xmm1
-	movsd	qword  [rbp-48], xmm0
-	add	dword  [rbp-28], 1
-.L6:
-	movsd	xmm1, qword  [rbp-96]
-	movsd	xmm0, qword  [rbp-96]
-	mulsd	xmm0, xmm1
-	movsd	xmm1, qword  [rbp-48]
-	ucomisd	xmm1, xmm0
-	jbe	.L7
-	cmp	dword  [rbp-28], 99
-.L7:
-	mov	rax, qword  [rbp-40]
-	add	rax, 8
-	movsd	xmm0, qword  [rax]
-	mov	rax, qword  [rbp-40]
-	mov	rax, qword  [rax]
-	movapd	xmm1, xmm0
-	mov	qword  [rbp-152], rax
-	movsd	xmm0, qword  [rbp-152]
-	mov	edi, string6
-	mov	eax, 2
-	call	printf
-	mov	eax, 0
-	add	rsp, 152
-	pop	rbx
-	pop	rbp
-	ret
+  ; Standard start.
+  push	rbp
+  mov	rbp, rsp
+  ; Save rbx, otherwise bad things happen.
+  push	rbx
+
+  ; Allocate stack space, 19 (* 8).
+  sub	rsp, 152
+
+  ; xmm0 <- 0.0
+  pxor	xmm0, xmm0
+  ; Save 0.0 for later
+  movsd	qword[rbp - 96], xmm0
+  mov	dword[rbp - 100], 0
+
+  ; Call scanf("epsilon = %lf\n") -> [rbp - 96];
+  lea	rsi, [rbp - 96]
+  mov	edi, string_scanf_epsilon
+  mov	eax, 0
+  call	scanf
+
+  ; Call scanf("order = %i\n") -> [rbp - 100];
+  lea	rsi, [rbp - 100]
+  mov	edi, string_scanf_order
+  mov	eax, 0
+  call	scanf
+
+  ; Allocate space for the pointers to the coefficients.
+  ; Store in [rbp - 56]
+  ; Load order (4 int - bytes).
+  mov	eax, dword[rbp - 100]
+  ; Size = (order + 1) * sizeof(double *)
+  add	rax, 1
+  sal	rax, 3
+  mov	rdi, rax
+  call	malloc
+  mov	qword[rbp - 56], rax
+
+  ; index = 0 -> [rbp - 20]
+  mov	dword[rbp - 20], 0
+  jmp	.L2
+  .coefficient_allocation_loop:
+  mov	eax, dword[rbp - 20]
+  lea	rdx, [0+rax*8]
+  mov	rax, qword[rbp-56]
+  lea	rbx, [rdx+rax]
+  mov	edi, 16
+  call	malloc
+  mov	qword[rbx], rax
+  mov	eax, dword[rbp-20]
+  lea	rdx, [0+rax*8]
+  mov	rax, qword[rbp-56]
+  add	rax, rdx
+  mov	rax, qword[rax]
+  pxor	xmm0, xmm0
+  movsd	qword[rax], xmm0
+  mov	eax, dword[rbp-20]
+  lea	rdx, [0+rax*8]
+  mov	rax, qword[rbp-56]
+  add	rax, rdx
+  mov	rax, qword[rax]
+  add	rax, 8
+  pxor	xmm0, xmm0
+  movsd	qword[rax], xmm0
+  add	dword[rbp-20], 1
+  .L2:
+  mov	eax, dword[rbp - 100]
+  add	eax, 1
+  cmp	eax, dword[rbp - 20]
+  jg	.coefficient_allocation_loop
+  mov	qword[rbp-64], string3
+  mov	qword[rbp-72], string4
+  mov	dword[rbp-132], 0
+  mov	eax, dword[rbp-100]
+  mov	dword[rbp-24], eax
+  jmp	.L4
+  .L5:
+  lea	rdx, [rbp-132]
+  mov	rax, qword[rbp-64]
+  mov	rsi, rdx
+  mov	rdi, rax
+  mov	eax, 0
+  call	scanf
+  mov	eax, dword[rbp-132]
+  lea	rdx, [0+rax*8]
+  mov	rax, qword[rbp-56]
+  add	rax, rdx
+  mov	rax, qword[rax]
+  lea	rdx, [rax+8]
+  mov	eax, dword[rbp-132]
+  lea	rcx, [0+rax*8]
+  mov	rax, qword[rbp-56]
+  add	rax, rcx
+  mov	rcx, qword[rax]
+  mov	rax, qword[rbp-72]
+  mov	rsi, rcx
+  mov	rdi, rax
+  mov	eax, 0
+  call	scanf
+  sub	dword[rbp-24], 1
+  .L4:
+  cmp	dword[rbp-24], 0
+  jns	.L5
+  .LBE3:
+  mov	qword[rbp-64], string5
+  lea	rax, [rbp-128]
+  lea	rdx, [rax+8]
+  lea	rcx, [rbp-128]
+  mov	rax, qword[rbp-64]
+  mov	rsi, rcx
+  mov	rdi, rax
+  mov	eax, 0
+  call	scanf
+  mov	dword[rbp-28], 0
+  lea	rax, [rbp-128]
+  mov	qword[rbp-40], rax
+  mov	ecx, dword[rbp-100]
+  mov	rdx, qword[rbp-40]
+  mov	rax, qword[rbp-56]
+  mov	esi, ecx
+  mov	rdi, rax
+  call	apply_function
+  mov	qword[rbp-80], rax
+  mov	rax, qword[rbp-80]
+  movsd	xmm1, qword[rax]
+  mov	rax, qword[rbp-80]
+  movsd	xmm0, qword[rax]
+  mulsd	xmm1, xmm0
+  mov	rax, qword[rbp-80]
+  add	rax, 8
+  movsd	xmm2, qword[rax]
+  mov	rax, qword[rbp-80]
+  add	rax, 8
+  movsd	xmm0, qword[rax]
+  mulsd	xmm0, xmm2
+  addsd	xmm0, xmm1
+  movsd	qword[rbp-48], xmm0
+  jmp	.L6
+  .L9:
+  mov	rax, qword[rbp-40]
+  mov	qword[rbp-88], rax
+  mov	ecx, dword[rbp-100]
+  mov	rdx, qword[rbp-88]
+  mov	rax, qword[rbp-56]
+  mov	esi, ecx
+  mov	rdi, rax
+  call	newton_step
+  mov	qword[rbp-40], rax
+  mov	ecx, dword[rbp-100]
+  mov	rdx, qword[rbp-40]
+  mov	rax, qword[rbp-56]
+  mov	esi, ecx
+  mov	rdi, rax
+  call	apply_function
+  mov	qword[rbp-80], rax
+  mov	rax, qword[rbp-80]
+  movsd	xmm1, qword[rax]
+  mov	rax, qword[rbp-80]
+  movsd	xmm0, qword[rax]
+  mulsd	xmm1, xmm0
+  mov	rax, qword[rbp-80]
+  add	rax, 8
+  movsd	xmm2, qword[rax]
+  mov	rax, qword[rbp-80]
+  add	rax, 8
+  movsd	xmm0, qword[rax]
+  mulsd	xmm0, xmm2
+  addsd	xmm0, xmm1
+  movsd	qword[rbp-48], xmm0
+  add	dword[rbp-28], 1
+  .L6:
+  movsd	xmm1, qword[rbp-96]
+  movsd	xmm0, qword[rbp-96]
+  mulsd	xmm0, xmm1
+  movsd	xmm1, qword[rbp-48]
+  ucomisd	xmm1, xmm0
+  jbe	.L7
+  cmp	dword[rbp-28], 99
+  jle	.L9
+  .L7:
+  mov	rax, qword[rbp-40]
+  add	rax, 8
+  movsd	xmm0, qword[rax]
+  mov	rax, qword[rbp-40]
+  mov	rax, qword[rax]
+  movapd	xmm1, xmm0
+  mov	qword[rbp-152], rax
+  movsd	xmm0, qword[rbp-152]
+  mov	edi, string6
+  mov	eax, 2
+  call	printf
+  mov	eax, 0
+  add	rsp, 152
+  pop	rbx
+  pop	rbp
+  ret
 
 ; ==== Apply function ===
 apply_function:
@@ -246,9 +252,7 @@ apply_function:
 	call power_complex
 	mov	[rbp - 8], rax
 
-  ; Extend result.
 	mov	eax, [rbp - 20]
-	cdqe
 	lea	rdx, [rax * 8]
 
   ; Multiply (value)^order by the coefficient.
@@ -677,6 +681,7 @@ sub rsp, 32
   leave
   ret
 
+;=======Newton step ===========
   newton_step:
   ; Generic start
   push rbp
@@ -749,3 +754,81 @@ sub rsp, 32
     ; Reset rbp & rsp and return.
     leave
     ret
+
+    calculate_derivative:
+    .LFB5:
+
+    	push	rbp
+    	mov	rbp, rsp
+    	push	rbx
+    	sub	rsp, 40
+    	mov	QWORD [rbp-40], rdi
+    	mov	DWORD [rbp-44], esi
+    	mov	eax, DWORD [rbp-44]
+    	cdqe
+    	sal	rax, 3
+    	mov	rdi, rax
+    	call	malloc
+    	mov	QWORD [rbp-24], rax
+    .LBB5:
+    	mov	DWORD [rbp-28], 1
+    	jmp	.L18
+    .L19:
+    	mov	eax, DWORD [rbp-28]
+    	cdqe
+    	sal	rax, 3
+    	lea	rdx, [rax-8]
+    	mov	rax, QWORD [rbp-24]
+    	lea	rbx, [rdx+rax]
+    	mov	edi, 16
+    	call	malloc
+    	mov	QWORD [rbx], rax
+    	mov	eax, DWORD [rbp-28]
+    	cdqe
+    	sal	rax, 3
+    	lea	rdx, [rax-8]
+    	mov	rax, QWORD [rbp-24]
+    	add	rax, rdx
+    	mov	rax, QWORD [rax]
+    	pxor	xmm0, xmm0
+    	cvtsi2sd	xmm0, DWORD [rbp-28]
+    	mov	edx, DWORD [rbp-28]
+    	movsx	rdx, edx
+    	lea	rcx, [0+rdx*8]
+    	mov	rdx, QWORD [rbp-40]
+    	add	rdx, rcx
+    	mov	rdx, QWORD [rdx]
+    	movsd	xmm1, QWORD [rdx]
+    	mulsd	xmm0, xmm1
+    	movsd	QWORD [rax], xmm0
+    	mov	eax, DWORD [rbp-28]
+    	cdqe
+    	sal	rax, 3
+    	lea	rdx, [rax-8]
+    	mov	rax, QWORD [rbp-24]
+    	add	rax, rdx
+    	mov	rax, QWORD [rax]
+    	add	rax, 8
+    	pxor	xmm0, xmm0
+    	cvtsi2sd	xmm0, DWORD [rbp-28]
+    	mov	edx, DWORD [rbp-28]
+    	movsx	rdx, edx
+    	lea	rcx, [0+rdx*8]
+    	mov	rdx, QWORD [rbp-40]
+    	add	rdx, rcx
+    	mov	rdx, QWORD [rdx]
+    	add	rdx, 8
+    	movsd	xmm1, QWORD [rdx]
+    	mulsd	xmm0, xmm1
+    	movsd	QWORD [rax], xmm0
+    	add	DWORD [rbp-28], 1
+    .L18:
+    	mov	eax, DWORD [rbp-28]
+    	cmp	eax, DWORD [rbp-44]
+    	jle	.L19
+    .LBE5:
+    	mov	rax, QWORD [rbp-24]
+    	add	rsp, 40
+    	pop	rbx
+    	pop	rbp
+    	ret

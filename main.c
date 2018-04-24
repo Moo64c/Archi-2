@@ -72,7 +72,8 @@ int main(void) {
     printf("root = %e %ei\n", current[0], current[1]);
 
     return 0;
-} */
+}
+*/
 
 /**
  * Debug - print the polynomial equation.
