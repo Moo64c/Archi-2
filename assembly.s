@@ -5,7 +5,7 @@ section .data
     dq 1.0
 
 section .text
-  global invert_complex, add_complex, subtract_complex, multiply_complex, divide_complex, newton_step
+  global invert_complex, add_complex, subtract_complex, multiply_complex, divide_complex, newton_step, calculate_derivative
   extern malloc, free, scanf, printf, calculate_derivative
   global power_complex, apply_function, main
 

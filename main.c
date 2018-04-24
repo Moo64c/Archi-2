@@ -16,10 +16,10 @@ extern double * divide_complex(double *, double *);
 extern double * power_complex(double *, int);
 extern double * apply_function(double **, int, double *);
 extern double * newton_step(double **, int, double *);
+extern double ** calculate_derivative(double **, int);
 
 void print_polynomial(double ** coefficients, int order);
 void print_complex(double * complex);
-double ** calculate_derivative(double ** coefficient, int order);
 
 /*
 int main(void) {
@@ -94,38 +94,12 @@ void print_complex(double * complex) {
 /**
  * Gets a derivative of a coefficient representation of a polynom.
  */
-double ** calculate_derivative(double ** coefficient, int order) {
-  double ** derivative = (double **) malloc((order) * sizeof(double));
-  for(int index = 1; index <= order ; index++){
-    derivative[index - 1] = (double *) malloc(2 * sizeof(double));
-    derivative[index - 1][0] = index * coefficient[index][0];
-    derivative[index - 1][1] = index * coefficient[index][1];
-  }
-  return derivative;
-}
-
-//
-// /**
-//  * Create next Z_n in the Newton-Raphson analysis.
-//  */
-// double * newton_step(double ** coefficients, int order, double * current_value) {
-//   double * result = (double *) malloc(2 * sizeof(double));
-//
-//   // f'
-//   double ** derivative = calculate_derivative(coefficients, order);
-//
-//   double * function_value = apply_function(coefficients, order, current_value);
-//   double * derivative_value = apply_function(derivative, order - 1, current_value);
-//   // f(z_n) / f'(z_n).
-//   double * divide_result = divide_complex(function_value, derivative_value);
-//
-//   // Clean up.
-//   free(function_value);
-//   free(derivative_value);
-//
-//   // z_n - (f(z_n) / f'(z_n)).
-//   result = subtract_complex(current_value, divide_result);
-//   free(divide_result);
-//
-//   return result;
+// double ** calculate_derivative(double ** coefficient, int order) {
+//   double ** derivative = (double **) malloc((order) * sizeof(double));
+//   for(int index = 1; index <= order ; index++){
+//     derivative[index - 1] = (double *) malloc(2 * sizeof(double));
+//     derivative[index - 1][0] = index * coefficient[index][0];
+//     derivative[index - 1][1] = index * coefficient[index][1];
+//   }
+//   return derivative;
 // }
