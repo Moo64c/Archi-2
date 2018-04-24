@@ -754,77 +754,87 @@ sub rsp, 32
     ret
 
     calculate_derivative:
-    .LFB5:
 
     	push	rbp
     	mov	rbp, rsp
     	push	rbx
+
+      ; Increase stack size.
     	sub	rsp, 40
-    	mov	QWORD [rbp-40], rdi
-    	mov	DWORD [rbp-44], esi
-    	mov	eax, DWORD [rbp-44]
-    	cdqe
+    	mov [rbp-40], rdi          ; coefficients
+    	mov	[rbp-44], esi          ; order
+    	mov	eax, [rbp-44]
     	sal	rax, 3
     	mov	rdi, rax
     	call	malloc
-    	mov	QWORD [rbp-24], rax
-    .LBB5:
-    	mov	DWORD [rbp-28], 1
-    	jmp	.L18
-    .L19:
-    	mov	eax, DWORD [rbp-28]
-    	cdqe
-    	sal	rax, 3
+      mov [rbp-24], rax                 ; derivative
+
+    	mov	DWORD [rbp-28], 1            ; define index = 1
+    	jmp	loop_1
+
+    calculate_coeff:
+    	mov	eax, [rbp-28]                ; index
+    	sal	rax, 3                       ; derivative index -1
     	lea	rdx, [rax-8]
-    	mov	rax, QWORD [rbp-24]
+    	mov	rax, [rbp-24]                ; derivative to rax.
+      ; rbx set to derivative[index - 1]
     	lea	rbx, [rdx+rax]
     	mov	edi, 16
     	call	malloc
-    	mov	QWORD [rbx], rax
-    	mov	eax, DWORD [rbp-28]
-    	cdqe
+    	mov [rbx], rax
+      ; set rax
+    	mov	eax, DWORD [rbp-28]         ;index
     	sal	rax, 3
     	lea	rdx, [rax-8]
-    	mov	rax, QWORD [rbp-24]
+    	mov	rax, [rbp-24]
     	add	rax, rdx
-    	mov	rax, QWORD [rax]
-    	pxor	xmm0, xmm0
-    	cvtsi2sd	xmm0, DWORD [rbp-28]
+    	mov	rax, [rax]
+    	pxor	xmm0, xmm0                ; initial to zero
+      ;Convert Doubleword Integer to
+      ;Scalar Double-Precision Floating-Point Value
+    	cvtsi2sd	xmm0, DWORD [rbp-28]  ; index
+      ; set rdx to coefficients array to pos [index][0]
     	mov	edx, DWORD [rbp-28]
     	movsx	rdx, edx
     	lea	rcx, [0+rdx*8]
-    	mov	rdx, QWORD [rbp-40]
+    	mov	rdx, [rbp-40]
     	add	rdx, rcx
-    	mov	rdx, QWORD [rdx]
-    	movsd	xmm1, QWORD [rdx]
-    	mulsd	xmm0, xmm1
-    	movsd	QWORD [rax], xmm0
+    	mov	rdx, [rdx]
+    	movsd	xmm1, [rdx]                 ; value of coefficients[index][0]
+    	mulsd	xmm0, xmm1                  ; index * coefficient[index][0];
+    	movsd [rax], xmm0                 ; into derivative[index - 1][0]
+      ; set rax to derivative[index - 1][1]
     	mov	eax, DWORD [rbp-28]
-    	cdqe
     	sal	rax, 3
     	lea	rdx, [rax-8]
-    	mov	rax, QWORD [rbp-24]
+    	mov	rax, [rbp-24]
     	add	rax, rdx
-    	mov	rax, QWORD [rax]
+    	mov	rax, [rax]
     	add	rax, 8
     	pxor	xmm0, xmm0
+      ;Convert Doubleword Integer to
+      ;Scalar Double-Precision Floating-Point Value
     	cvtsi2sd	xmm0, DWORD [rbp-28]
+      ; set rdx to coefficients array to pos [index][1]
     	mov	edx, DWORD [rbp-28]
     	movsx	rdx, edx
     	lea	rcx, [0+rdx*8]
-    	mov	rdx, QWORD [rbp-40]
+    	mov	rdx, [rbp-40]
     	add	rdx, rcx
-    	mov	rdx, QWORD [rdx]
+    	mov	rdx, [rdx]
     	add	rdx, 8
-    	movsd	xmm1, QWORD [rdx]
-    	mulsd	xmm0, xmm1
-    	movsd	QWORD [rax], xmm0
-    	add	DWORD [rbp-28], 1
-    .L18:
+    	movsd	xmm1, [rdx]
+    	mulsd	xmm0, xmm1                   ;index * coefficient[index][0]
+    	movsd [rax], xmm0                  ; derivative[index - 1][1]
+    	add	DWORD [rbp-28], 1              ; next index
+
+    loop_1:
+    ; oder must be bigger \ eaqual to index.
+    ; if so, move to .L2
     	mov	eax, DWORD [rbp-28]
     	cmp	eax, DWORD [rbp-44]
-    	jle	.L19
-    .LBE5:
+    	jle	calculate_coeff
+
     	mov	rax, QWORD [rbp-24]
     	add	rsp, 40
     	pop	rbx

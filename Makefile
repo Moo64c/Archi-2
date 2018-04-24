@@ -1,5 +1,5 @@
 all: clean bin/assembly.o
-	gcc -o main -g -Wall -fno-omit-frame-pointer main.c bin/assembly.o -lm
+	gcc -o root -g -Wall -fno-omit-frame-pointer main.c bin/assembly.o -lm
 
 bin/assembly.o:
 	mkdir -p bin
@@ -9,8 +9,8 @@ diss: clean bin/assembly.o
 	gcc -g -Wall -fno-omit-frame-pointer main.c bin/assembly.o -lm -S -masm=intel  -fno-stack-protector -o diss.s
 
 test: clean all
-	./main < foo.txt
+	./root < foo.txt
 
 .PHONY: clean
 clean:
-	rm -rf bin main
+	rm -rf bin root
